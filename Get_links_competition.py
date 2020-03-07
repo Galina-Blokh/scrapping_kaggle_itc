@@ -29,7 +29,7 @@ def get_links_from_site(driver, num_pages=5):
     for i in range(num_pages):
         competition_links += get_links_from_page(driver)
         driver.find_element_by_xpath(
-            '//*[@id="root"]/div/div[1]/div[2]/div/div/div[2]/div[2]/div[3]/div/button[2]').click()
+            '//*[@id="root"]/div/div[1]/div[2]/div/div/div[2]/div[2]/div[3]/div/button[2]').click() #push_next_page
         time.sleep(5)
     return competition_links
 
@@ -44,4 +44,4 @@ def extract_links_to_file(file_name):
     output_comp_links.close()
 
 if __name__ == '__main__':
-    extract_links_to_file('competition_links_5p.txt')
+    extract_links_to_file('competition_links_p.txt')
