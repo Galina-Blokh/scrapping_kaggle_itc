@@ -1,39 +1,40 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-import time
-
-def get_page():
-    for i in range(1, 20):
-        try:
-            compet = driver.find_element_by_xpath(
-                '//*[@id="root"]/div/div[1]/div[2]/div/div/div[2]/div[2]/div[2]/a[' + str(i) + ']')
-        except:
-            print('not now')
-            continue
-        competition_links.append(compet.get_attribute("href"))
-
-
-options = webdriver.ChromeOptions()
-options.add_argument('headless')
-
-driver = webdriver.Chrome(chrome_options=options,executable_path='./chromedriver')
-driver.get("https://www.kaggle.com/search?q=in%3Acompetitions")
-time.sleep(5)
-assert "Kaggle" in driver.title
-
-competition_links = []
-
-
-for i in range(1,10):
-    get_page()
-    # click button next page
-    driver.find_element_by_xpath('//*[@id="root"]/div/div[1]/div[2]/div/div/div[2]/div[2]/div[3]/div/button[2]').click()
-    time.sleep(5)
-
-
-print(competition_links)
-
-
-
-
+#
+# Header of project
+#
+# //*[@id="site-content"]/div[2]/div/div[1]/div/div/div[1]/div/div[2]/h1
+#
+# subheader
+# //*[@id="site-content"]/div[2]/div/div[1]/div/div/div[1]/div/div[2]/h2
+#
+#
+# Number of teams
+# //*[@id="site-content"]/div[2]/div/div[1]/div/div/div[1]/div/div[2]/div/ul/li[1]
+#
+#
+# Description //*[@id="competition-overview__nav-content-container"]/div[2]/div
+#
+#
+# Start
+# //*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[3]/div[2]/span
+# <span class="tooltip-container tooltip-container--left horizontal-timeline__point-tooltip-wrapper" data-tooltip="Mar 3, 2016"></span>
+#
+#
+# #End
+#
+# // *[ @ id = "site-content"] / div[2] / div / div[2] / div[3] / div / div / div / div / div / div[4] / div[2] / span
+# <span class="tooltip-container horizontal-timeline__point-tooltip-wrapper" data-tooltip="Mar 17, 2016"></span>
+#
+# Teams (bottom)
+# //*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[1]/p[1]
+# <p class="competition-overview__stat-number"><span>32</span></p>
+#
+#
+# #Entries
+#
+# // *[ @ id = "site-content"] / div[2] / div / div[2] / div[4] / div[1] / div[3] / p[1]
+# <p class="competition-overview__stat-number"><span>453</span></p>
+#
+# #Competitors
+#
+# // *[ @ id = "site-content"] / div[2] / div / div[2] / div[4] / div[1] / div[2] / p[1]
+# <p class="competition-overview__stat-number"><span>42</span></p>
