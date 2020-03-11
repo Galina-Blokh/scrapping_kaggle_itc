@@ -24,12 +24,12 @@ def connect():
     return driver
 
 
-def get_links_from_site(driver, num_pages=5):
+def get_links_from_site(driver, num_pages=):
     competition_links = []
     for i in range(num_pages):
         competition_links += get_links_from_page(driver)
         driver.find_element_by_xpath(
-            '//*[@id="root"]/div/div[1]/div[2]/div/div/div[2]/div[2]/div[3]/div/button[2]').click() #push_next_page
+            '//*[@id="root"]/div/div[1]/div[2]/div/div/div[2]/div[2]/div[3]/div/button[2]').click()
         time.sleep(5)
     return competition_links
 
