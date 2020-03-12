@@ -103,6 +103,7 @@ def dicts_to_csv(list_of_dicts, output_filename):
 
 
 if __name__ == '__main__':
+
     COMPETITION_FEATS = {"header": extract_header, "teams": extract_teams, "competitors": extract_competitors}
     chrome_driver = create_driver()
     competition_data = extract_for_competition(open('competition_links_5p.txt', "r").readlines(), chrome_driver)
