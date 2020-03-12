@@ -3,33 +3,36 @@ import time
 import datetime
 import sys
 
+NUMBER_OF_ARGS = 2
+
+LINK_END = '//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[4]/div[2]/span'
+LINK_BEGIN ='//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[3]/div[2]/span'
+LINK_COMPETITION ='https://www.kaggle.com/c/info-290t-who-survived-the-titanic/overview/evaluation'
+
+
 
 def create_driver():
     """
     creates driver to get the link
     :return: driver
     """
-    driver = webdriver.Chrome(executable_path='./chromedriver')
-    driver.get("https://www.kaggle.com/c/info-290t-who-survived-the-titanic/overview/evaluation")
-    time.sleep(3)
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    driver = webdriver.Chrome(chrome_options=options, executable_path='./chromedriver')
     return driver
 
 
-def get_date_of_competition(driver):
+def get_date_of_competition(driver, link_competition):
     """
     gets date of the start and the end of the competition
     :param driver:
     :return: list of two elements
     """
     list_of_dates = []
-    driver.get("https://www.kaggle.com/c/info-290t-who-survived-the-titanic/overview/evaluation")
-    time.sleep(5)
-    date_end = driver.find_element_by_xpath(
-        '//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[4]/div[2]/span'
-    )
-    date_start = driver.find_element_by_xpath(
-        '//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[3]/div[2]/span'
-    )
+    driver.get(link_competition)
+    time.sleep(3)
+    date_end = driver.find_element_by_xpath(LINK_END)
+    date_start = driver.find_element_by_xpath(LINK_BEGIN)
     date_s = (date_start.get_attribute('data-tooltip'))
     date_e = date_end.get_attribute('data-tooltip')
     list_of_dates.append(date_s)
@@ -65,12 +68,21 @@ def getting_duration_competition(date_str_file):
 
 
 def main():
+    if len(sys.argv) != NUMBER_OF_ARGS:
+        print('usage: ./convertor.py link_competition')
+        sys.exit(1)
+
+    link_competition = sys.argv[1]
+
     chrome_driver = create_driver()
-    list_of_dates = get_date_of_competition(chrome_driver)
-    print(list_of_dates)
+    list_of_dates = get_date_of_competition(chrome_driver, link_competition)
     for i in list_of_dates:
         write_date_into_file(i + '\n')
+
+
     print(getting_duration_competition('date_file.txt'))
+
+
 
 
 if __name__ == '__main__':
