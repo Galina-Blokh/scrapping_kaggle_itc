@@ -80,6 +80,11 @@ def get_description_of_competition(driver):
 
 
 def get_start_of_competition(driver):
+    '''
+    get competiton start
+    :param driver: chrome driver
+    :return: start date as str
+    '''
     try:
         date_start = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[3]/div[2]/span')
     except:
@@ -89,6 +94,11 @@ def get_start_of_competition(driver):
 
 
 def get_end_of_competition(driver):
+    '''
+       get competiton end
+       :param driver: chrome driver
+       :return: end date as str
+       '''
     try:
         date_end = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[4]/div[2]/span')
     except:
