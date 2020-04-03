@@ -21,7 +21,7 @@ def create_driver():
 LINK_PRIZE_SIZE = '''//*[@id="site-content"]/div[2]/div/div[1]/div/div/div[1]/div[2]/div[2]/div[2]'''
 LINK_ORGANIZATOR_NAME = '''//*[@id="site-content"]/div[2]/div/div[1]/div/div/div[1]/div[2]/div[3]/div/ul/li[1]/span/span[2]'''
 LINK_TOPIC = '''//*[@id="site-content"]/div[2]/div/div[2]/div[1]/div[1]/div/div[1]/span[0]/text()'''
-
+# the linc Topic doeasn't give the correct result
 
 def get_prize_size(driver):
     """
@@ -62,8 +62,6 @@ def get_number_of_topics(driver):
     """
     try:
         num_of_topics = driver.find_element_by_xpath(LINK_TOPIC).text
-
-
     except:
         print('topics: not now')
         num_of_topics = 'NOTHING THERE'
