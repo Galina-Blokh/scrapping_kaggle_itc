@@ -15,7 +15,7 @@ def create_driver():
     return driver
 
 
-LEADERBOARD_DICT = {'place': 1, "position_change": 2, 'team_name':3, 'score': 6, 'entries_leader': 7, 'last_entry':8 }
+LEADERBOARD_DICT = {'place': 1, "position_change": 2, 'team_name': 3, 'score': 6, 'entries_leader': 7, 'last_entry': 8}
 
 
 def get_from_leaderboard(driver, row, column, column_name):
@@ -37,18 +37,20 @@ def extract_for_leaderboard(links, driver):
     :param driver: chrome driver
     :return: list of dictionaries with extracted data
     """
+    print("Extracting leader board data...")
     leader_board = []
 
     for link in links:
-        driver.get(link)
+        driver.get(link+"/leaderboard")
         time.sleep(2)
-        res_dic = {"link": link.strip()}
+
 
         table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table')
-        num_leaders =  len(table.find_elements_by_tag_name("tr"))
+        num_leaders = len(table.find_elements_by_tag_name("tr"))
 
         for i in range(1, num_leaders-1):
-            time.sleep(1)
+            time.sleep(0.1)
+            res_dic = {"link": link.strip()}
             for key, value in LEADERBOARD_DICT.items():
                 res_dic[key] = get_from_leaderboard(driver, i, value, key)
             leader_board.append(res_dic)
@@ -57,10 +59,10 @@ def extract_for_leaderboard(links, driver):
 
 
 if __name__ == '__main__':
-    LINKS_LEADERBOARD_TEST = ['https://www.kaggle.com/c/passenger-screening-algorithm-challenge/leaderboard',
-                              'https://www.kaggle.com/c/second-annual-data-science-bowl/leaderboard',
-                              'https://www.kaggle.com/c/hospital/leaderboard',
-                              'https://www.kaggle.com/c/deloitte-western-australia-rental-prices/leaderboard']
+    LINKS_LEADERBOARD_TEST = ['https://www.kaggle.com/c/passenger-screening-algorithm-challenge',
+                              'https://www.kaggle.com/c/second-annual-data-science-bowl',
+                              'https://www.kaggle.com/c/hospital',
+                              'https://www.kaggle.com/c/deloitte-western-australia-rental-prices']
 
     chrome_driver = create_driver()
 
