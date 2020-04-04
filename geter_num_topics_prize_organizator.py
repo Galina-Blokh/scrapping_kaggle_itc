@@ -4,7 +4,7 @@ from selenium import webdriver
 def create_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
-    driver = webdriver.Chrome(chrome_options=options, executable_path='chromedriver')
+    driver = webdriver.Chrome(chrome_options=options, executable_path='./chromedriver')
     driver.get("https://www.kaggle.com/c/m5-forecasting-accuracy/discussion")
 
     return driver
@@ -24,9 +24,9 @@ def get_prize_size(driver):
         prize = driver.find_element_by_xpath(LINK_PRIZE_SIZE).text
         prize_size = int(re.sub('\D', '', prize))
         print('prize: OK', prize_size)
-    except:
-        print('prize size: not now')
-        prize_size = prize_size
+    except Exception as e:
+        print("can't get prize now",  str(e))
+        prize_size = None
     return prize_size
 
 
@@ -39,9 +39,9 @@ def organizator_name(driver):
     try:
         organizator = driver.find_element_by_xpath(LINK_ORGANIZATOR_NAME).text
         print('organizator: OK', organizator)
-    except:
-        print('organizator: not now')
-        organizator = 'no name'
+    except Exception as e:
+        print("organizator can't get now",  str(e))
+        organizator = None
     return organizator
 
 
@@ -54,10 +54,10 @@ def get_number_of_topics(driver):
     try:
         topics = driver.find_element_by_xpath(LINK_TOPIC).get_attribute("innerHTML")
         num_of_topics = int(re.sub('\D', '', topics))
-        print('prize: OK', num_of_topics)
-    except:
-        print('topics: not now', num_of_topics)
-        num_of_topics = 'NOTHING THERE'
+        print('num_of_topic: OK', num_of_topics)
+    except Exception as e:
+        print("topics: can't get now", str(e))
+        num_of_topics = None
     return num_of_topics
 
 
