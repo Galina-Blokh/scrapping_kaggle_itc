@@ -47,7 +47,7 @@ def extract_for_leaderboard(links, driver):
 
         table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table')
         num_leaders = len(table.find_elements_by_tag_name("tr"))
-
+        print(link, num_leaders )
         for i in range(1, num_leaders-1):
             time.sleep(0.1)
             res_dic = {"link": link.strip()}

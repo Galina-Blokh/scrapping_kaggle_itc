@@ -1,8 +1,10 @@
 from selenium import webdriver
+import json
 import time
 import csv
 import download_one as do
 import leaderboard
+import tags
 import geter_num_topics_prize_organizator as tpo
 
 
@@ -22,10 +24,11 @@ def extract_for_competition(links, driver):
     collect data from competition pages
     :param links: list of links to kaggle competitions pages
     :param driver: chrome driver
-    :return: list of dictionaries with extracted data
+    :return: list of dictionaries with extracted data; dictionary with tags
     """
     print("Extracting competition data...")
     competition_info = []
+    tags_dic = {}
 
     for link in links:
         driver.get(link)
@@ -34,12 +37,14 @@ def extract_for_competition(links, driver):
         for key, value in COMPETITION_FEATS.items():
             res_dic[key] = value(driver)
 
+        tags_dic[link.strip()] = tags.extract_for_tags(driver)
+
         driver.get(link+"/discussion")
         time.sleep(1)
         res_dic["number_topics"] = tpo.get_number_of_topics(driver)
         print(res_dic)
         competition_info.append(res_dic)
-    return competition_info
+    return competition_info, tags_dic
 
 
 def dicts_to_csv(list_of_dicts, output_filename):
@@ -55,6 +60,7 @@ def dicts_to_csv(list_of_dicts, output_filename):
         writer.writerow(row)
 
 
+
 if __name__ == '__main__':
     print("Hi! I'm starting to exctract data about kaggle competitions")
 
@@ -64,10 +70,16 @@ if __name__ == '__main__':
                          "description": do.get_description_of_competition, "prize": tpo.get_prize_size,
                          "organizator":tpo.get_organizator_name}
     chrome_driver = create_driver()
-    links = open('competition_links_5p.txt', "r").readlines()
+    links = open('test_links.txt', "r").readlines()
 
-    competition_data = extract_for_competition(links, chrome_driver)
-    dicts_to_csv(competition_data, 'kaggle_competition.csv')
+    competitions_data, tags_data = extract_for_competition(links, chrome_driver)
+    dicts_to_csv(competitions_data, 'kaggle_competition.csv')
 
     leader_board = leaderboard.extract_for_leaderboard(links, chrome_driver)
     dicts_to_csv(leader_board, 'kaggle_leaders.csv')
+
+    with open('tags.json', 'w') as file:
+        json.dump(tags_data, file)
+
+
+

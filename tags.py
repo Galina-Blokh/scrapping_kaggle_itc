@@ -17,23 +17,28 @@ def create_driver():
 
 
 
-def get_from_tag(driver, row):
+def get_from_tag(driver, number):
+    '''
+    get tag by number
+    :param driver: selenium driver
+    :param number: tag number
+    :return: string
+    '''
     try:
-        xpath = '//*[@id="site-content"]/div[2]/div/div[3]/div/div/div/div[2]/span['+ str(row) +\
+        xpath = '//*[@id="site-content"]/div[2]/div/div[3]/div/div/div/div[2]/span[' + str(number) +\
                                       ']/div/a/span'
         tag = driver.find_element_by_xpath(xpath).text
 
     except Exception as e:
-        print("can't get now tag {}".format(str(row)))
+        print("can't get now tag {}".format(str(number)))
         tag = None
     return tag
 
 
 
-def extract_for_tags(link, driver):
+def extract_for_tags(driver):
     """
-    collect data from competition pages
-    :param links: list of links to kaggle competitions pages
+    collect tags from competition pages
     :param driver: chrome driver
     :return: list of dictionaries with extracted data
     """
