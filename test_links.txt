@@ -1,0 +1,4 @@
+https://www.kaggle.com/c/passenger-screening-algorithm-challenge
+https://www.kaggle.com/c/second-annual-data-science-bowl
+https://www.kaggle.com/c/hospital
+https://www.kaggle.com/c/deloitte-western-australia-rental-prices

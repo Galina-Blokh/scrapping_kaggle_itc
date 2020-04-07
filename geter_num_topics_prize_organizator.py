@@ -53,11 +53,11 @@ def get_number_of_topics(driver):
     """
     try:
         topics = driver.find_element_by_xpath(LINK_TOPIC).get_attribute("innerHTML")
-        num_of_topics = int(re.sub('\D', '', topics))
+        number_topics = int(re.sub('\D', '', topics))
     except Exception as e:
         print("topics: can't get now", str(e))
-        num_of_topics = None
-    return num_of_topics
+        number_topics = None
+    return number_topics
 
 
 if __name__ == '__main__':
