@@ -12,12 +12,13 @@ def connect_to_db():
     # you must create a Cursor object. It will let
     #  you execute all the queries you need
     cur = db.cursor()
-    return cur
+    return cur, db
 
 
 def sql_from_line(columns, line):
     sql_cmd = 'INSERT INTO competitions (' + columns + ') VALUES ("' + '","'.join(str(x) for x in line.values()) + '");'
     print(sql_cmd)
+    return sql_cmd
 
 
 
@@ -27,11 +28,16 @@ def insert_competitions(cursor, csvfilename):
     columns = ','.join(comp_reader.fieldnames)
 
     for line in comp_reader:
-        sql_from_line(columns, line)
+        sq = sql_from_line(columns, line)
+        cursor.execute(sq)
+
+
+
 
 
 
 
 if __name__ == '__main__':
-    cursor = connect_to_db()
+    cursor, db = connect_to_db()
     insert_competitions(cursor, 'kaggle_competition.csv')
+    db.commit()

@@ -26,8 +26,8 @@ def get_prize_size(driver):
         prize_size = str(re.sub('\D', '', prize))
     except Exception as e:
         print("can't get prize now",  str(e))
-        prize_size = None
-    return prize_size
+        return '0'
+    return prize_size.replace(',','')
 
 
 def get_organizator_name(driver):
@@ -53,11 +53,11 @@ def get_number_of_topics(driver):
     """
     try:
         topics = driver.find_element_by_xpath(LINK_TOPIC).get_attribute("innerHTML")
-        number_topics = int(re.sub('\D', '', topics))
+        number_topics = str(re.sub('\D', '', topics))
     except Exception as e:
         print("topics: can't get now", str(e))
-        number_topics = None
-    return number_topics
+        return '0'
+    return number_topics.replace(',','')
 
 
 if __name__ == '__main__':
