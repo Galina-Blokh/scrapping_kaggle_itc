@@ -36,8 +36,10 @@ def extract_for_competition(links, driver):
         res_dic = {"link": link.strip()}
         for key, value in COMPETITION_FEATS.items():
             res_dic[key] = value(driver)
-
-        tags_dic[link.strip()] = tags.extract_for_tags(driver)
+        try:
+            tags_dic[link.strip()] = tags.extract_for_tags(driver)
+        except Exception as e:
+            print("tags problem", link, e)
 
         driver.get(link+"/discussion")
         time.sleep(1)
@@ -65,10 +67,17 @@ if __name__ == '__main__':
     print("Hi! I'm starting to exctract data about kaggle competitions")
 
     COMPETITION_FEATS = {"header": do.extract_header, "competition_start": do.get_start_of_competition,
-                         "competition_end": do.get_end_of_competition,
-                         "teams": do.extract_teams, "competitors": do.extract_competitors, "entries": do.get_number_of_entries,
-                         "description": do.get_description_of_competition, "prize": tpo.get_prize_size,
-                         "organizator":tpo.get_organizator_name}
+                          "competition_end": do.get_end_of_competition,
+                          "teams_count": do.extract_teams, "competitors": do.extract_competitors,
+                          "entries_competition": do.get_number_of_entries,
+                          "description": do.get_description_of_competition, "prize": tpo.get_prize_size,
+                          "organizator_name": tpo.get_organizator_name}
+
+
+
+
+
+
     chrome_driver = create_driver()
     links = open('test_links.txt', "r").readlines()
 

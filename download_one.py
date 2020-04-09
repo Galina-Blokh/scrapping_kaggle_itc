@@ -1,3 +1,6 @@
+import datetime
+
+
 def extract_competitors(driver):
     """
     extract number of competitors from competition page
@@ -9,7 +12,7 @@ def extract_competitors(driver):
             '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[2]/p[1]').text)
     except:
         print('competitors: not now')
-        competitors = None
+        competitors = '0'
     return competitors
 
 
@@ -24,7 +27,7 @@ def extract_teams(driver):
             '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[1]/p[1]').text)
     except:
         print('teams: not now')
-        teams = None
+        teams = '0'
     return teams
 
 
@@ -45,9 +48,9 @@ def extract_header(driver):
                 '//*[@id="site-content"]/div[2]/div/div[1]/div/div/div[1]/div[2]/div[2]/div/h1').text
         except:
             print('header: not now')
-            header_competition = None
+            return None
 
-    return header_competition
+    return header_competition.replace("\"", "\\\"")
 
 
 def get_number_of_entries(driver):
@@ -61,8 +64,8 @@ def get_number_of_entries(driver):
 
     except:
         print('entries: not now')
-        num_of_entries = None
-    return num_of_entries
+        return '0'
+    return num_of_entries.replace(',','')
 
 
 def get_description_of_competition(driver):
@@ -75,8 +78,13 @@ def get_description_of_competition(driver):
         description_text = driver.find_element_by_xpath('//*[@id="competition-overview__nav-content-container"]/div[2]/div/div').text
     except:
         print('description: not now')
-        description_text = None
-    return description_text
+        return None
+    return description_text.replace("\"", "\\\"")
+
+
+def to_sql_datetime(date_str):
+    date_time_obj = datetime.datetime.strptime(date_str, "%b %d, %Y")
+    return date_time_obj.strftime("%Y-%m-%d")
 
 
 def get_start_of_competition(driver):
@@ -89,8 +97,8 @@ def get_start_of_competition(driver):
         date_start = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[3]/div[2]/span')
     except:
         print('date start: not now')
-        return None
-    return date_start.get_attribute('data-tooltip')
+        return '1900-01-01'
+    return to_sql_datetime(date_start.get_attribute('data-tooltip'))
 
 
 def get_end_of_competition(driver):
@@ -102,9 +110,13 @@ def get_end_of_competition(driver):
     try:
         date_end = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[4]/div[2]/span')
     except:
-        print('date end: not now')
-        return None
-    return date_end.get_attribute('data-tooltip')
+        try:
+            #try to get copmetiton_end data for competitons whith deadline and competitions end with different dates
+            date_end = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[5]/div[2]/span')
+        except:
+            print('date end: not now')
+            return '1900-01-01'
+    return to_sql_datetime(date_end.get_attribute('data-tooltip'))
 
 
 

@@ -10,16 +10,19 @@ CREATE TABLE teams (
   name  varchar(256)
 );
 
-CREATE TABLE competition (
+
+
+CREATE TABLE competitions (
   competition_id int UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
   organizator_name varchar(256),
   description text,
   link varchar(256),
   teams_count int,
-  headline varchar(256),
+  competitors int,
+  header varchar(256),
   entries_competition int,
-  d_start datetime,
-  d_end datetime,
+  competition_start datetime,
+  competition_end datetime,
   prize int,
   number_topics int
 );
@@ -38,15 +41,15 @@ CREATE TABLE tags (
   tag varchar(50)
 );
 
-CREATE TABLE competags (
+CREATE TABLE compet_tags (
   tag_id int,
   competition_id int
 );
 
-ALTER TABLE leaderboard ADD FOREIGN KEY (competition_id) REFERENCES competition (competition_id);
+ALTER TABLE leaderboard ADD FOREIGN KEY (competition_id) REFERENCES competitions (competition_id);
 
 ALTER TABLE leaderboard ADD FOREIGN KEY (team_id) REFERENCES teams (team_id);
 
-ALTER TABLE competags ADD FOREIGN KEY (tag_id) REFERENCES tags (tag_id);
+ALTER TABLE compet_tags ADD FOREIGN KEY (tag_id) REFERENCES tags (tag_id);
 
-ALTER TABLE competags ADD FOREIGN KEY (competition_id) REFERENCES competition (competition_id);
+ALTER TABLE compet_tags ADD FOREIGN KEY (competition_id) REFERENCES competitions (competition_id);
