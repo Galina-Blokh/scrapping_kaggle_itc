@@ -36,8 +36,10 @@ def extract_for_competition(links, driver):
         res_dic = {"link": link.strip()}
         for key, value in COMPETITION_FEATS.items():
             res_dic[key] = value(driver)
-
-        tags_dic[link.strip()] = tags.extract_for_tags(driver)
+        try:
+            tags_dic[link.strip()] = tags.extract_for_tags(driver)
+        except Exception as e:
+            print("tags problem", link, e)
 
         driver.get(link+"/discussion")
         time.sleep(1)

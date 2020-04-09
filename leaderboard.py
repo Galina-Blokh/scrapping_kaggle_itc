@@ -44,8 +44,12 @@ def extract_for_leaderboard(links, driver):
         driver.get(link+"/leaderboard")
         time.sleep(2)
 
+        try:
+            table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table')
+        except Exception as e:
+            print('leaderbord problem', link)
+            continue
 
-        table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table')
         num_leaders = len(table.find_elements_by_tag_name("tr"))
         print(link, num_leaders )
         for i in range(1, num_leaders-1):

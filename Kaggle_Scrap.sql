@@ -41,7 +41,7 @@ CREATE TABLE tags (
   tag varchar(50)
 );
 
-CREATE TABLE competags (
+CREATE TABLE compet_tags (
   tag_id int,
   competition_id int
 );
@@ -50,6 +50,6 @@ ALTER TABLE leaderboard ADD FOREIGN KEY (competition_id) REFERENCES competitions
 
 ALTER TABLE leaderboard ADD FOREIGN KEY (team_id) REFERENCES teams (team_id);
 
-ALTER TABLE competags ADD FOREIGN KEY (tag_id) REFERENCES tags (tag_id);
+ALTER TABLE compet_tags ADD FOREIGN KEY (tag_id) REFERENCES tags (tag_id);
 
-ALTER TABLE competags ADD FOREIGN KEY (competition_id) REFERENCES competitions (competition_id);
+ALTER TABLE compet_tags ADD FOREIGN KEY (competition_id) REFERENCES competitions (competition_id);

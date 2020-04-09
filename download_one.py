@@ -110,8 +110,12 @@ def get_end_of_competition(driver):
     try:
         date_end = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[4]/div[2]/span')
     except:
-        print('date end: not now')
-        return '1900-01-01'
+        try:
+            #try to get copmetiton_end data for competitons whith deadline and competitions end with different dates
+            date_end = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[5]/div[2]/span')
+        except:
+            print('date end: not now')
+            return '1900-01-01'
     return to_sql_datetime(date_end.get_attribute('data-tooltip'))
 
 
