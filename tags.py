@@ -1,8 +1,11 @@
+import logging
+
 from selenium import webdriver
 import time
 import csv
 import download_one as do
-
+logging.basicConfig(filename='main.log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 def create_driver():
     """
@@ -30,7 +33,7 @@ def get_from_tag(driver, number):
         tag = driver.find_element_by_xpath(xpath).text
 
     except Exception as e:
-        print("can't get now tag {}".format(str(number)))
+        logging.exception("can't get now tag {}".format(str(number)))
         tag = None
     return tag
 
@@ -42,7 +45,7 @@ def extract_for_tags(driver):
     :param driver: chrome driver
     :return: list of dictionaries with extracted data
     """
-    print("Extracting tag data...")
+    logging.info("Extracting tag data...")
     table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[3]/div/div/div/div[2]')
     num_tags = len(table.find_elements_by_tag_name("a"))
     tags = []
@@ -67,7 +70,7 @@ def main():
         chrome_driver.get(link)
         time.sleep(2)
         tags = extract_for_tags(link, chrome_driver)
-        print(link, tags)
+        logging.debug(link, tags)
 
 if __name__ == '__main__':
     main()
