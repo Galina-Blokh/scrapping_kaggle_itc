@@ -33,7 +33,6 @@ CREATE TABLE leaderboard (
   place int,
   entries_leader int,
   score float,
-  position_change varchar(5),
   last_entry varchar(20)
 );
 

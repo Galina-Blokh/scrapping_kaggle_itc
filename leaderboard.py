@@ -13,8 +13,10 @@ def create_driver():
     return driver
 
 
-LEADERBOARD_DICT = {'place': 1, "position_change": 2, 'team_name': 3, 'score': 6, 'entries_leader': 7, 'last_entry': 8}
+LEADERBOARD_DICT_T1 = {'place': 1,  'team_name': 3, 'score': 6, 'entries_leader': 7, 'last_entry': 8}
+LEADERBOARD_DICT_T2 = {'place': 1,  'team_name': 2, 'score': 5, 'entries_leader': 6, 'last_entry': 7}
 
+SCORE_XPATH = '//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table/thead/tr/th[6]/span/span'
 
 def get_from_leaderboard(driver, row, column, column_name):
     try:
@@ -45,7 +47,17 @@ def extract_for_leaderboard(links, driver):
         try:
             table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table')
         except Exception as e:
-            print('leaderbord problem', link)
+            print('Cant find leaderbord table', link)
+            continue
+
+        # detect leaderboard table type
+        try:
+            if driver.find_element_by_xpath(SCORE_XPATH).text == 'Score':
+                curent_leaderboard_dic = LEADERBOARD_DICT_T1
+            else:
+                curent_leaderboard_dic = LEADERBOARD_DICT_T2
+        except Exception as e:
+            print('Malformed leaderbord table', link)
             continue
 
         num_leaders = len(table.find_elements_by_tag_name("tr"))
@@ -53,7 +65,7 @@ def extract_for_leaderboard(links, driver):
         for i in range(1, num_leaders-1):
             time.sleep(0.1)
             res_dic = {"link": link.strip()}
-            for key, value in LEADERBOARD_DICT.items():
+            for key, value in curent_leaderboard_dic.items():
                 res_dic[key] = get_from_leaderboard(driver, i, value, key)
             leader_board.append(res_dic)
             print(res_dic)

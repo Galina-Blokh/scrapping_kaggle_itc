@@ -84,8 +84,10 @@ def insert_leaderebord(cursor, csv_file):
         row['team_id'] = str(team_id)
         columns = ','.join(row.keys())
         sq = sql_from_line(columns, row, 'leaderboard')
-        cursor.execute(sq)
-
+        try:
+            cursor.execute(sq)
+        except Exception as e:
+            print("can't insert leaderboard entity")
 
 if __name__ == '__main__':
     cursor, db = connect_to_db()
