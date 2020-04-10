@@ -30,10 +30,11 @@ CREATE TABLE competitions (
 CREATE TABLE leaderboard (
   competition_id int,
   team_id int,
-  place_rank int,
+  place int,
   entries_leader int,
   score float,
-  position_changed int
+  position_change varchar(5),
+  last_entry varchar(20)
 );
 
 CREATE TABLE tags (

@@ -1,7 +1,5 @@
 from selenium import webdriver
 import time
-import csv
-import download_one as do
 
 
 def create_driver():
