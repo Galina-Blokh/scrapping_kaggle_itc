@@ -7,8 +7,11 @@ import leaderboard
 import tags
 import geter_num_topics_prize_organizator as tpo
 import logging
+
 logging.basicConfig(filename='main.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
+
+
 def create_driver():
     """
     create silenium chrome driver
@@ -41,13 +44,15 @@ def extract_for_competition(links, driver):
         try:
             tags_dic[link.strip()] = tags.extract_for_tags(driver)
         except Exception as e:
-            logging.exception("tags problem", link, e)
+            print("tags problem", link, e)
+            logging.exception("tags problem with the link")
 
-        driver.get(link+"/discussion")
+        driver.get(link + "/discussion")
         time.sleep(1)
         res_dic["number_topics"] = tpo.get_number_of_topics(driver)
-        logging.debug(res_dic)
+        print(res_dic)
         competition_info.append(res_dic)
+        logging.info('number_topics is added into result dictionary ')
     return competition_info, tags_dic
 
 
@@ -58,30 +63,26 @@ def dicts_to_csv(list_of_dicts, output_filename):
     :param output_filename:name for output .csv file
     :return: none
     """
-    writer = csv.DictWriter(open(output_filename, "w", newline='', encoding = "utf-8"), fieldnames=list_of_dicts[0].keys())
+    writer = csv.DictWriter(open(output_filename, "w", newline='', encoding="utf-8"),
+                            fieldnames=list_of_dicts[0].keys())
     writer.writeheader()
     for row in list_of_dicts:
         writer.writerow(row)
-
+    logging.info('the dictionary/json file is converted into csv {}'.format(output_filename))
 
 
 if __name__ == '__main__':
     logging.info("Hi! I'm starting to exctract data about kaggle competitions")
 
     COMPETITION_FEATS = {"header": do.extract_header, "competition_start": do.get_start_of_competition,
-                          "competition_end": do.get_end_of_competition,
-                          "teams_count": do.extract_teams, "competitors": do.extract_competitors,
-                          "entries_competition": do.get_number_of_entries,
-                          "description": do.get_description_of_competition, "prize": tpo.get_prize_size,
-                          "organizator_name": tpo.get_organizator_name}
-
-
-
-
-
+                         "competition_end": do.get_end_of_competition,
+                         "teams_count": do.extract_teams, "competitors": do.extract_competitors,
+                         "entries_competition": do.get_number_of_entries,
+                         "description": do.get_description_of_competition, "prize": tpo.get_prize_size,
+                         "organizator_name": tpo.get_organizator_name}
 
     chrome_driver = create_driver()
-    links = open('competition_links_5p.txt', "r").readlines()
+    links = open('test_links.txt', "r").readlines()
 
     competitions_data, tags_data = extract_for_competition(links, chrome_driver)
     dicts_to_csv(competitions_data, 'kaggle_competition.csv')
@@ -91,6 +92,4 @@ if __name__ == '__main__':
 
     with open('tags.json', 'w') as file:
         json.dump(tags_data, file)
-
-
-
+    logging.info('main in the main is finished')

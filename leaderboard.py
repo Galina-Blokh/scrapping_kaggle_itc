@@ -27,8 +27,10 @@ def get_from_leaderboard(driver, row, column, column_name):
         data = driver.find_element_by_xpath(xpath).text
 
     except Exception as e:
-        logging.exception("can't get now", column_name, str(e))
+        print("can't get now", column_name, str(e))
+        logging.exception("can't get column from leaderboard")
         data = None
+    logging.info('Whole row from leaderboard is collected')
     return data
 
 
@@ -49,7 +51,8 @@ def extract_for_leaderboard(links, driver):
         try:
             table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table')
         except Exception as e:
-            logging.exception('Cant find leaderbord table', link)
+            print('Cant find leaderbord table', link)
+            logging.exception('Cant find leaderbord table by the link')
             continue
 
         # detect leaderboard table type
@@ -59,18 +62,22 @@ def extract_for_leaderboard(links, driver):
             else:
                 curent_leaderboard_dic = LEADERBOARD_DICT_T2
         except Exception as e:
-            logging.exception('Malformed leaderbord table', link)
+            print('Malformed leaderbord table', link)
+            logging.exception('Malformed leaderbord table')
             continue
 
         num_leaders = len(table.find_elements_by_tag_name("tr"))
-        logging.debug(link, num_leaders )
+        print(link, num_leaders )
+        logging.info('point on the page with columns leaderbord table is founded')
+
         for i in range(1, num_leaders-1):
             time.sleep(0.1)
             res_dic = {"link": link.strip()}
             for key, value in curent_leaderboard_dic.items():
                 res_dic[key] = get_from_leaderboard(driver, i, value, key)
             leader_board.append(res_dic)
-            logging.debug(res_dic)
+            print(res_dic)
+    logging.info('Extracting data from leaderboard  into dictionary is finished')
     return leader_board
 
 
@@ -82,5 +89,6 @@ if __name__ == '__main__':
 
     chrome_driver = create_driver()
 
-    logging.debug(extract_for_leaderboard(LINKS_LEADERBOARD_TEST, chrome_driver))
+    print(extract_for_leaderboard(LINKS_LEADERBOARD_TEST, chrome_driver))
+    logging.info('Main in the leaderboards finished work')
 

@@ -33,8 +33,10 @@ def get_from_tag(driver, number):
         tag = driver.find_element_by_xpath(xpath).text
 
     except Exception as e:
-        logging.exception("can't get now tag {}".format(str(number)))
+        print("can't get now tag {}".format(str(number)))
+        logging.exception("can't get tag")
         tag = None
+    logging.info('Data from tags is collected')
     return tag
 
 
@@ -53,6 +55,7 @@ def extract_for_tags(driver):
         time.sleep(0.1)
         tag = get_from_tag(driver, i)
         tags.append(tag)
+    logging.info('Tag data is Extracted by link')
     return tags
 
 
@@ -70,7 +73,8 @@ def main():
         chrome_driver.get(link)
         time.sleep(2)
         tags = extract_for_tags(link, chrome_driver)
-        logging.debug(link, tags)
+        print(link, tags)
+        logging.info('Extracting tag by link is finished')
 
 if __name__ == '__main__':
     main()
