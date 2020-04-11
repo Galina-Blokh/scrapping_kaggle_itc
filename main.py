@@ -6,6 +6,7 @@ import download_one as do
 import leaderboard
 import tags
 import geter_num_topics_prize_organizator as tpo
+import argparse
 
 
 def create_driver():
@@ -64,6 +65,28 @@ def dicts_to_csv(list_of_dicts, output_filename):
 
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='Exctract data from kaggle.com')
+
+    parser.add_argument('--links_file', type=str, help='File with links to competiton pages', action="store",
+                        default='test_links.txt')
+    parser.add_argument('--compet_file', type=str, help='Where to store data from competition page',
+                        default='kaggle_competition.csv')
+    parser.add_argument('--leader_file', type=str, help='Where to store data from leadreboard page',
+                        default='kaggle_leaders.csv')
+    parser.add_argument('--tags_file', type=str, help='Where to store tags from competition page',
+                        default='tags.json')
+
+    # parser.add_argument('--log_file', type=str, help='File to store logs', action="store", default='log.txt')
+
+    # parser.add_argument('--log_level', type=str, help='Level of logging', default='INFO')
+
+
+    args = parser.parse_args()
+    # logger = prepare_logger(args.log_file)
+
+
+
     print("Hi! I'm starting to exctract data about kaggle competitions")
 
     COMPETITION_FEATS = {"header": do.extract_header, "competition_start": do.get_start_of_competition,
@@ -79,15 +102,15 @@ if __name__ == '__main__':
 
 
     chrome_driver = create_driver()
-    links = open('test_links.txt', "r").readlines()
+    links = open(args.links_file, "r").readlines()
 
     competitions_data, tags_data = extract_for_competition(links, chrome_driver)
-    dicts_to_csv(competitions_data, 'kaggle_competition.csv')
+    dicts_to_csv(competitions_data, args.compet_file)
 
     leader_board = leaderboard.extract_for_leaderboard(links, chrome_driver)
-    dicts_to_csv(leader_board, 'kaggle_leaders.csv')
+    dicts_to_csv(leader_board, args.leader_file)
 
-    with open('tags.json', 'w') as file:
+    with open(args.tags_file, 'w') as file:
         json.dump(tags_data, file)
 
 

@@ -1,5 +1,6 @@
 from selenium import webdriver
 import time
+import argparse
 
 
 def get_links_from_page(my_webpage):
@@ -65,4 +66,10 @@ def extract_links_to_file(file_name):
 
 
 if __name__ == '__main__':
-    extract_links_to_file('competition_links_5p.txt')
+    parser = argparse.ArgumentParser(description='Exctract links for competitions from kaggle.com')
+
+    parser.add_argument('--links_file', type=str, help='Where store the scrapped links of competitions', action="store",
+                        default='test_links.txt')
+    args = parser.parse_args()
+
+    extract_links_to_file(args.links_file)

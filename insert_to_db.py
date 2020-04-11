@@ -2,6 +2,7 @@
 import pymysql
 import csv
 import json
+import argparse
 
 
 def connect_to_db():
@@ -90,16 +91,34 @@ def insert_leaderebord(cursor, csv_file):
             print("can't insert leaderboard entity")
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Text2Vec service.')
+
+    parser.add_argument('--compet_file', type=str, help='File with data about competition for "competition" table',
+                        default='kaggle_competition.csv')
+    parser.add_argument('--tags_file', type=str, help='File with competition tags for "tags" and "compet_tags" tables',
+                        default='tags.json')
+    parser.add_argument('--leader_file', type=str, help='File with data from competition leaderboard to build\
+                        "leadeboard" and "teams" tables', default='kaggle_leaders.csv')
+
+    # parser.add_argument('--db_name', type=str, help='Name of database to build', default='KaggleITC')
+
+    # parser.add_argument('--log_file', type=str, help='File to store logs', action="store", default='log.txt')
+    # parser.add_argument('--port', type=int, help='Port', default=50051)
+    #
+    args = parser.parse_args()
+    # logger = prepare_logger(args.log_file)
+
+
     cursor, db = connect_to_db()
-    insert_competitions(cursor, 'kaggle_competition.csv')
+    insert_competitions(cursor, args.compet_file)
     db.commit()
-    insert_tags(cursor, 'tags.json')
+    insert_tags(cursor, args.tags_file)
     db.commit()
-    insert_compet_tags(cursor, 'tags.json')
-    db.commit()
-
-    insert_teams(cursor, 'kaggle_leaders.csv')
+    insert_compet_tags(cursor, args.tags_file)
     db.commit()
 
-    insert_leaderebord(cursor, 'kaggle_leaders.csv')
+    insert_teams(cursor,args.leader_file)
+    db.commit()
+
+    insert_leaderebord(cursor, args.leader_file)
     db.commit()
