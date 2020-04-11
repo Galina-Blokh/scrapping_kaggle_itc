@@ -1,9 +1,20 @@
 import logging
 import re
+import sys
+
 from selenium import webdriver
 
-logging.basicConfig(filename='main.log', level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+file_handler = logging.FileHandler('log_task.log')
+file_handler.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 def create_driver():
@@ -31,10 +42,10 @@ def get_prize_size(driver):
         prize = driver.find_element_by_xpath(LINK_PRIZE_SIZE).text
         prize_size = str(re.sub('\D', '', prize))
     except Exception as e:
-        print("can't get prize now", str(e))
-        logging.exception("can't get prize by the link")
+        # print("can't get prize now", str(e))
+        logger.warning("can't get prize by the link")
         return '0'
-    logging.info('Prize extracted from competition page')
+    logger.info('Prize extracted from competition page')
     return prize_size.replace(',', '')
 
 
@@ -48,11 +59,11 @@ def get_organizator_name(driver):
         organizator = driver.find_element_by_xpath(LINK_ORGANIZATOR_NAME).text
 
     except Exception as e:
-        print("organizator can't get now", str(e))
-        logging.exception("Can't get `organizator_name` from competition page")
+        # print("organizator can't get now", str(e))
+        logger.warning("Can't get `organizator_name` from competition page")
         organizator = None
 
-    logging.info("Collected`organizator_name` from competition page")
+    logger.info("Collected`organizator_name` from competition page")
     return organizator
 
 
@@ -66,11 +77,11 @@ def get_number_of_topics(driver):
         topics = driver.find_element_by_xpath(LINK_TOPIC).get_attribute("innerHTML")
         number_topics = str(re.sub('\D', '', topics))
     except Exception as e:
-        print("topics: can't get now", str(e))
-        logging.exception("Can't get `num_topics` from competition page")
+        # print("topics: can't get now", str(e))
+        logger.warning("Can't get `num_topics` from competition page")
         return '0'
 
-    logging.info("Collected `num_topics` from competition page")
+    logger.info("Collected `num_topics` from competition page")
     return number_topics.replace(',', '')
 
 

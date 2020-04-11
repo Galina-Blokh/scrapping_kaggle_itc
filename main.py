@@ -1,15 +1,15 @@
+import sys
 from selenium import webdriver
 import json
 import time
 import csv
 import download_one as do
 import leaderboard
+
 import tags
 import geter_num_topics_prize_organizator as tpo
 import logging
 
-logging.basicConfig(filename='main.log', level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def create_driver():
@@ -20,7 +20,7 @@ def create_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     driver = webdriver.Chrome(chrome_options=options, executable_path='./chromedriver')
-    logging.info('Chromedriver is created')
+    logger.info('Chromedriver is created')
     return driver
 
 
@@ -31,7 +31,7 @@ def extract_for_competition(links, driver):
     :param driver: chrome driver
     :return: list of dictionaries with extracted data; dictionary with tags
     """
-    logging.info("Extracting competition data...")
+    logger.info("Extracting competition data...")
     competition_info = []
     tags_dic = {}
 
@@ -44,15 +44,16 @@ def extract_for_competition(links, driver):
         try:
             tags_dic[link.strip()] = tags.extract_for_tags(driver)
         except Exception as e:
-            print("tags problem", link, e)
-            logging.exception("tags problem with the link")
+            # print("tags problem", link, e)
+            logger.warning("tags problem with the link")
 
         driver.get(link + "/discussion")
         time.sleep(1)
         res_dic["number_topics"] = tpo.get_number_of_topics(driver)
-        print(res_dic)
+        # print(res_dic)
         competition_info.append(res_dic)
-        logging.info('number_topics is added into result dictionary ')
+        logger.debug(res_dic)
+    logger.info('number_topics is added into result dictionary')
     return competition_info, tags_dic
 
 
@@ -68,11 +69,23 @@ def dicts_to_csv(list_of_dicts, output_filename):
     writer.writeheader()
     for row in list_of_dicts:
         writer.writerow(row)
-    logging.info('the dictionary/json file is converted into csv {}'.format(output_filename))
+    logger.info('the dictionary/json file is converted into csv {}'.format(output_filename))
 
 
 if __name__ == '__main__':
-    logging.info("Hi! I'm starting to exctract data about kaggle competitions")
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+
+    file_handler = logging.FileHandler('log_task.log')
+    file_handler.setLevel(logging.DEBUG)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+
+    logger.info("Hi! I'm starting to exctract data about kaggle competitions")
 
     COMPETITION_FEATS = {"header": do.extract_header, "competition_start": do.get_start_of_competition,
                          "competition_end": do.get_end_of_competition,
@@ -92,4 +105,4 @@ if __name__ == '__main__':
 
     with open('tags.json', 'w') as file:
         json.dump(tags_data, file)
-    logging.info('main in the main is finished')
+    logger.info('main in the main is finished')

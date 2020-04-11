@@ -1,11 +1,21 @@
 import logging
+import sys
 
 from selenium import webdriver
 import time
 import csv
 import download_one as do
-logging.basicConfig(filename='main.log', level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+file_handler = logging.FileHandler('tags.log')
+file_handler.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 def create_driver():
     """
@@ -33,10 +43,11 @@ def get_from_tag(driver, number):
         tag = driver.find_element_by_xpath(xpath).text
 
     except Exception as e:
-        print("can't get now tag {}".format(str(number)))
-        logging.exception("can't get tag")
+        # print("can't get now tag {}".format(str(number)))
+        logger.exception("can't get tag")
         tag = None
-    logging.info('Data from tags is collected')
+    
+    logger.debug('Data from tags is collected')
     return tag
 
 
@@ -55,7 +66,7 @@ def extract_for_tags(driver):
         time.sleep(0.1)
         tag = get_from_tag(driver, i)
         tags.append(tag)
-    logging.info('Tag data is Extracted by link')
+    logger.info('Tag data is Extracted ')
     return tags
 
 
@@ -66,16 +77,17 @@ def main():
                               'https://www.kaggle.com/c/second-annual-data-science-bowl',
                               'https://www.kaggle.com/c/hospital',
                               'https://www.kaggle.com/c/deloitte-western-australia-rental-prices']
-
+    logger.info('starting collectind data for tags')
     chrome_driver = create_driver()
     links = LINKS_LEADERBOARD_TEST
     for link in links:
         chrome_driver.get(link)
         time.sleep(2)
         tags = extract_for_tags(link, chrome_driver)
-        print(link, tags)
-        logging.info('Extracting tag by link is finished')
+        # print(link, tags)
+        logger.debug('Extracting tag by link is finished')
 
 if __name__ == '__main__':
+
     main()
 
