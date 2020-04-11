@@ -35,7 +35,6 @@ def sql_from_line(columns, line, table):
     return sql_cmd
 
 
-
 def insert_competitions(cursor, csvfilename):
     '''
     insert data to competition table
@@ -133,7 +132,6 @@ if __name__ == '__main__':
 
     parser.add_argument('--password', type=str, help='Password to database', default='')
 
-
     args = parser.parse_args()
 
     cursor, db = connect_to_db(args.db_name, args.password)
@@ -144,7 +142,7 @@ if __name__ == '__main__':
     insert_compet_tags(cursor, args.tags_file)
     db.commit()
 
-    insert_teams(cursor,args.leader_file)
+    insert_teams(cursor, args.leader_file)
     db.commit()
 
     insert_leaderebord(cursor, args.leader_file)
