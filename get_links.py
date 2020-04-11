@@ -1,9 +1,20 @@
 import logging
-from venv import logger
+import sys
 
 from selenium import webdriver
 import time
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+file_handler = logging.FileHandler('get_links.log')
+file_handler.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 # logging.basicConfig(filename='main.log', level=logging.INFO,
 #                     format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -20,7 +31,7 @@ def get_links_from_page(my_webpage):
             compet = my_webpage.find_element_by_xpath(
                 '//*[@id="root"]/div/div[1]/div[2]/div/div/div[2]/div[2]/div[2]/a[' + str(i) + ']')
         except:
-            print('not now')
+            # print('not now')
             logger.exception("Can't get_links_from_page")
             continue
         competition_links.append(compet.get_attribute("href"))
@@ -54,7 +65,7 @@ def get_links_from_site(driver, num_pages=5):
         driver.find_element_by_xpath(
             '//*[@id="root"]/div/div[1]/div[2]/div/div/div[2]/div[2]/div[3]/div/button[2]').click()
         time.sleep(5)
-    logging.info('Collected competition links from pages')
+    logger.info('Collected competition links from pages')
     return competition_links
 
 
@@ -70,7 +81,7 @@ def extract_links_to_file(file_name):
     for link in competition_links:
         output_comp_links.write(link + '\n')
     output_comp_links.close()
-    logging.info('extract_links_to_file finished')
+    logger.info('extract_links_to_file finished')
 
 
 if __name__ == '__main__':
