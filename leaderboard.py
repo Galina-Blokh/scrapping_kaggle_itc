@@ -73,6 +73,8 @@ def extract_for_leaderboard(links, driver):
 
 
 if __name__ == '__main__':
+
+
     LINKS_LEADERBOARD_TEST = ['https://www.kaggle.com/c/passenger-screening-algorithm-challenge',
                               'https://www.kaggle.com/c/second-annual-data-science-bowl',
                               'https://www.kaggle.com/c/hospital',
