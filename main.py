@@ -1,3 +1,5 @@
+import config
+import sys
 from selenium import webdriver
 import json
 import time
@@ -6,6 +8,9 @@ import download_one as do
 import leaderboard
 import tags
 import geter_num_topics_prize_organizator as tpo
+import argparse
+
+
 
 
 def create_driver():
@@ -16,6 +21,7 @@ def create_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     driver = webdriver.Chrome(chrome_options=options, executable_path='./chromedriver')
+    logger.info('Chromedriver was created')
     return driver
 
 
@@ -26,26 +32,32 @@ def extract_for_competition(links, driver):
     :param driver: chrome driver
     :return: list of dictionaries with extracted data; dictionary with tags
     """
-    print("Extracting competition data...")
+    logger.info("Extracting competition data...")
     competition_info = []
     tags_dic = {}
 
     for link in links:
         driver.get(link)
         time.sleep(2)
+
         res_dic = {"link": link.strip()}
         for key, value in COMPETITION_FEATS.items():
             res_dic[key] = value(driver)
+
         try:
             tags_dic[link.strip()] = tags.extract_for_tags(driver)
         except Exception as e:
-            print("tags problem", link, e)
+            logger.debug("no tags for link " + link + str(e))
 
-        driver.get(link+"/discussion")
+        driver.get(link + "/discussion")
         time.sleep(1)
+
         res_dic["number_topics"] = tpo.get_number_of_topics(driver)
-        print(res_dic)
+
         competition_info.append(res_dic)
+        logger.debug("Collected data for link " + link)
+
+    logger.info('Collected data for competitions.')
     return competition_info, tags_dic
 
 
@@ -56,15 +68,32 @@ def dicts_to_csv(list_of_dicts, output_filename):
     :param output_filename:name for output .csv file
     :return: none
     """
-    writer = csv.DictWriter(open(output_filename, "w", newline='', encoding = "utf-8"), fieldnames=list_of_dicts[0].keys())
+    writer = csv.DictWriter(open(output_filename, "w", newline='', encoding="utf-8"),
+                            fieldnames=list_of_dicts[0].keys())
     writer.writeheader()
     for row in list_of_dicts:
         writer.writerow(row)
-
+    logger.info('the dictionary/json file saved into csv {}'.format(output_filename))
 
 
 if __name__ == '__main__':
-    print("Hi! I'm starting to exctract data about kaggle competitions")
+
+    parser = argparse.ArgumentParser(description='Exctract data from kaggle.com')
+
+    parser.add_argument('--links_file', type=str, help='File with links to competiton pages', action="store",
+                        default='test_links.txt')
+    parser.add_argument('--compet_file', type=str, help='Where to store data from competition page',
+                        default='kaggle_competition.csv')
+    parser.add_argument('--leader_file', type=str, help='Where to store data from leadreboard page',
+                        default='kaggle_leaders.csv')
+    parser.add_argument('--tags_file', type=str, help='Where to store tags from competition page',
+                        default='tags.json')
+
+    args = parser.parse_args()
+
+    logger = config.get_logger(__name__)
+
+    logger.info("Hi! I'm starting to exctract data about kaggle competitions")
 
     COMPETITION_FEATS = {"header": do.extract_header, "competition_start": do.get_start_of_competition,
                           "competition_end": do.get_end_of_competition,
@@ -73,22 +102,15 @@ if __name__ == '__main__':
                           "description": do.get_description_of_competition, "prize": tpo.get_prize_size,
                           "organizator_name": tpo.get_organizator_name}
 
-
-
-
-
-
     chrome_driver = create_driver()
-    links = open('test_links.txt', "r").readlines()
+    competition_links = open(args.links_file, "r").readlines()
 
-    competitions_data, tags_data = extract_for_competition(links, chrome_driver)
-    dicts_to_csv(competitions_data, 'kaggle_competition.csv')
+    competitions_data, tags_data = extract_for_competition(competition_links, chrome_driver)
+    dicts_to_csv(competitions_data, args.compet_file)
 
-    leader_board = leaderboard.extract_for_leaderboard(links, chrome_driver)
-    dicts_to_csv(leader_board, 'kaggle_leaders.csv')
+    leader_board = leaderboard.extract_for_leaderboard(competition_links, chrome_driver)
+    dicts_to_csv(leader_board, args.leader_file)
 
-    with open('tags.json', 'w') as file:
+    with open(args.tags_file, 'w') as file:
         json.dump(tags_data, file)
-
-
-
+    logger.info('Scrapping is finished')

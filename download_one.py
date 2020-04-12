@@ -1,5 +1,7 @@
 import datetime
+import config
 
+logger = config.get_logger(__name__)
 
 COMPETITORS_TEXT_XPATH = '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[2]/p[2]'
 
@@ -16,8 +18,9 @@ def extract_competitors(driver):
         competitors = int(driver.find_element_by_xpath(
             '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[2]/p[1]').text)
     except:
-        print('competitors: not now')
+        logger.debug("Can't find `number competitors` on the page")
         competitors = '0'
+    logger.debug('Collected `number competitors` from page')
     return competitors
 
 
@@ -31,8 +34,9 @@ def extract_teams(driver):
         teams = int(driver.find_element_by_xpath(
             '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[1]/p[1]').text)
     except:
-        print('teams: not now')
+        logger.debug("Can't collect `number teams`from a page")
         teams = '0'
+    logger.debug('Collected `number of teams` from competition page')
     return teams
 
 
@@ -52,9 +56,9 @@ def extract_header(driver):
             header_competition = driver.find_element_by_xpath(
                 '//*[@id="site-content"]/div[2]/div/div[1]/div/div/div[1]/div[2]/div[2]/div/h1').text
         except:
-            print('header: not now')
+            logger.debug("Can't collect `header` from competition page")
             return None
-
+    logger.debug("Collected `header` from competition page")
     return header_competition.replace("\"", "\\\"")
 
 
@@ -72,8 +76,10 @@ def get_number_of_entries(driver):
         num_of_entries = driver.find_element_by_xpath(entries_xpath).text
 
     except:
-        print('entries: not now')
+        logger.debug('Cannot get `number of entries` from competition page')
         return '0'
+
+    logger.debug('Collected `number of entries` from competition page')
     return num_of_entries.replace(',','')
 
 
@@ -86,13 +92,21 @@ def get_description_of_competition(driver):
     try:
         description_text = driver.find_element_by_xpath('//*[@id="competition-overview__nav-content-container"]/div[2]/div/div').text
     except:
-        print('description: not now')
+        logger.debug('Cannot get `description` from competition page')
         return None
+
+    logger.debug('Collected `description` from competition page')
     return description_text.replace("\"", "\\\"")
 
 
 def to_sql_datetime(date_str):
+    '''
+    convert string into datetime format
+    :param date_str:
+    :return: datetime obj
+    '''
     date_time_obj = datetime.datetime.strptime(date_str, "%b %d, %Y")
+    logger.debug('Converted `date_str` into datetime obj')
     return date_time_obj.strftime("%Y-%m-%d")
 
 
@@ -100,13 +114,14 @@ def get_start_of_competition(driver):
     '''
     get competiton start
     :param driver: chrome driver
-    :return: start date as str
+    :return: start date as datetime
     '''
     try:
         date_start = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[3]/div[2]/span')
     except:
-        print('date start: not now')
+        logger.debug("Can't get `date_start of the competition`. return '1900-01-01'")
         return '1900-01-01'
+    logger.debug('Got the `date_start` of the competition')
     return to_sql_datetime(date_start.get_attribute('data-tooltip'))
 
 
@@ -114,7 +129,7 @@ def get_end_of_competition(driver):
     '''
        get competiton end
        :param driver: chrome driver
-       :return: end date as str
+       :return: end date as datetime
        '''
     try:
         date_end = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[4]/div[2]/span')
@@ -123,8 +138,9 @@ def get_end_of_competition(driver):
             #try to get copmetiton_end data for competitons whith deadline and competitions end with different dates
             date_end = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[5]/div[2]/span')
         except:
-            print('date end: not now')
+            logger.debug("Can't get `date_end of the competition`. return '1900-01-01'")
             return '1900-01-01'
+    logger.debug('Got the `date_end` of the competition')
     return to_sql_datetime(date_end.get_attribute('data-tooltip'))
 
 
