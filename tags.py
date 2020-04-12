@@ -17,12 +17,12 @@ def create_driver():
 
 
 def get_from_tag(driver, number):
-    '''
+    """
     get tag by number
     :param driver: selenium driver
     :param number: tag number
     :return: string
-    '''
+    """
     try:
         xpath = '//*[@id="site-content"]/div[2]/div/div[3]/div/div/div/div[2]/span[' + str(number) +\
                                       ']/div/a/span'
@@ -41,8 +41,6 @@ def extract_for_tags(driver):
     :param driver: chrome driver
     :return: list of dictionaries with extracted data
     """
-    logger.info("Extracting tags...")
-
     try:
         table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[3]/div/div/div/div[2]')
     except:
@@ -58,6 +56,7 @@ def extract_for_tags(driver):
 
     logger.debug('Tags are extracted')
     return tags
+
 
 
 

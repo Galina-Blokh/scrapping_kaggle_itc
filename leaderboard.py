@@ -15,14 +15,18 @@ def create_driver():
     return driver
 
 
-LEADERBOARD_DICT_T1 = {'place': 1,  'team_name': 3, 'score': 6, 'entries_leader': 7, 'last_entry': 8}
-LEADERBOARD_DICT_T2 = {'place': 1,  'team_name': 2, 'score': 5, 'entries_leader': 6, 'last_entry': 7}
-
-SCORE_XPATH = '//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table/thead/tr/th[6]/span/span'
-
 def get_from_leaderboard(driver, row, column, column_name):
+    """
+    get data from one cell in leader board
+    :param driver: chtomedriver
+    :param row: row number
+    :param column: column number
+    :param column_name: column name
+    :return: text from cell
+    """
     try:
-        xpath = '//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table/tbody/tr[' + str(row) + ' ]/td[' + str(column) + ']'
+        xpath = '//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table/tbody/tr[' + str(row) + ' ]/td[' \
+                + str(column) + ']'
         data = driver.find_element_by_xpath(xpath).text
 
     except Exception as e:
@@ -32,9 +36,30 @@ def get_from_leaderboard(driver, row, column, column_name):
     return data
 
 
+def extract_from_table(driver, link, curent_leaderboard_dic, num_leaders):
+    """
+    extract data from leaderboard table
+    :param driver: chromedriver
+    :param link: link to competition leadreboard
+    :param curent_leaderboard_dic: dict of leaderboard feachures
+    :param num_leaders: number of leader in table
+    :return: list of dictionaries
+    """
+    leader_board = []
+    for i in range(1, num_leaders - 1):
+        time.sleep(0.1)
+        res_dic = {"link": link.strip()}
+        for key, value in curent_leaderboard_dic.items():
+            res_dic[key] = get_from_leaderboard(driver, i, value, key)
+        leader_board.append(res_dic)
+        logger.debug("row " + str(i) + " collected from " + link)
+    logger.info('Extracted leader board data for link ' + link)
+    return leader_board
+
+
 def extract_for_leaderboard(links, driver):
     """
-    collect data from competition pages
+    extract leaderboard data for competition pages
     :param links: list of links to kaggle competitions pages
     :param driver: chrome driver
     :return: list of dictionaries with extracted data
@@ -43,7 +68,7 @@ def extract_for_leaderboard(links, driver):
     leader_board = []
 
     for link in links:
-        driver.get(link+"/leaderboard")
+        driver.get(link + "/leaderboard")
         time.sleep(2)
 
         try:
@@ -54,23 +79,17 @@ def extract_for_leaderboard(links, driver):
 
         # detect leaderboard table type
         try:
-            if driver.find_element_by_xpath(SCORE_XPATH).text == 'Score':
-                curent_leaderboard_dic = LEADERBOARD_DICT_T1
+            if driver.find_element_by_xpath(config.SCORE_XPATH).text == 'Score':
+                curent_leaderboard_dic = config.LEADERBOARD_DICT_T1
             else:
-                curent_leaderboard_dic = LEADERBOARD_DICT_T2
+                curent_leaderboard_dic = config.LEADERBOARD_DICT_T2
         except Exception as e:
             logger.warning('Malformed leaderbord table' + link)
             continue
 
         num_leaders = len(table.find_elements_by_tag_name("tr"))
 
-        for i in range(1, num_leaders-1):
-            time.sleep(0.1)
-            res_dic = {"link": link.strip()}
-            for key, value in curent_leaderboard_dic.items():
-                res_dic[key] = get_from_leaderboard(driver, i, value, key)
-            leader_board.append(res_dic)
-            logger.debug("row " + str(i) + " collected from " + link)
+        leader_board += extract_from_table(driver, link, curent_leaderboard_dic, num_leaders)
     logger.info('Finished extracting leaderboards')
     return leader_board
 
@@ -85,4 +104,3 @@ if __name__ == '__main__':
     chrome_driver = create_driver()
 
     logger.info('Main in the leaderboards finished')
-

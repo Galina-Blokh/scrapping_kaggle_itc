@@ -3,8 +3,6 @@ import config
 
 logger = config.get_logger(__name__)
 
-COMPETITORS_TEXT_XPATH = '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[2]/p[2]'
-
 def extract_competitors(driver):
     """
     extract number of competitors from competition page
@@ -12,7 +10,7 @@ def extract_competitors(driver):
     :return: number of competitors
     """
     try:
-        if driver.find_element_by_xpath(COMPETITORS_TEXT_XPATH).text != 'Competitors':
+        if driver.find_element_by_xpath(config.COMPETITORS_TEXT_XPATH).text != 'Competitors':
             return '0'
 
         competitors = int(driver.find_element_by_xpath(
@@ -70,7 +68,7 @@ def get_number_of_entries(driver):
     """
     entries_xpath = '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[3]/p[1]/span'
     try:
-        if driver.find_element_by_xpath(COMPETITORS_TEXT_XPATH).text != 'Competitors':
+        if driver.find_element_by_xpath(config.COMPETITORS_TEXT_XPATH).text != 'Competitors':
             entries_xpath = '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[2]/p[1]/span'
 
         num_of_entries = driver.find_element_by_xpath(entries_xpath).text

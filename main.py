@@ -1,5 +1,4 @@
 import config
-import sys
 from selenium import webdriver
 import json
 import time
@@ -9,8 +8,6 @@ import leaderboard
 import tags
 import geter_num_topics_prize_organizator as tpo
 import argparse
-
-
 
 
 def create_driver():
@@ -46,6 +43,7 @@ def extract_for_competition(links, driver):
 
         try:
             tags_dic[link.strip()] = tags.extract_for_tags(driver)
+            logger.info("Extracting tags for " + link)
         except Exception as e:
             logger.debug("no tags for link " + link + str(e))
 
@@ -55,7 +53,7 @@ def extract_for_competition(links, driver):
         res_dic["number_topics"] = tpo.get_number_of_topics(driver)
 
         competition_info.append(res_dic)
-        logger.debug("Collected data for link " + link)
+        logger.info("Collected data for link " + link)
 
     logger.info('Collected data for competitions.')
     return competition_info, tags_dic
