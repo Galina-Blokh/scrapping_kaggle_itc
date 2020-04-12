@@ -38,7 +38,7 @@ def connect():
     return driver
 
 
-def get_links_from_site(driver, num_pages=5):
+def get_links_from_site(driver, num_pages=450):
     """
     get competition links from kaggle site
     :param driver: chrome driver
