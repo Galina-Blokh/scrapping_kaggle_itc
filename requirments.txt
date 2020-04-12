@@ -1,8 +1,0 @@
-jsonschema==3.2.0
-PyMySQL==0.9.3
-python-dateutil==2.8.0
-requests==2.22.0
-selenium==3.141.0
-urllib3==1.25.6
-webencodings==0.5.1
-xlrd==1.2.0
