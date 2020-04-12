@@ -1,21 +1,10 @@
 import logging
 import sys
-
 import pymysql
 import csv
 import json
 import argparse
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
-file_handler = logging.FileHandler('insert_to_db.log')
-file_handler.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
-
-logger.addHandler(file_handler)
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 def connect_to_db(db_name, password):
     '''
@@ -31,7 +20,7 @@ def connect_to_db(db_name, password):
     # you must create a Cursor object. It will let
     #  you execute all the queries you need
     cur = db.cursor()
-    logger.info('Connector cur for db is created')
+    logger.info('Connector cursor for database is created')
     return cur, db
 
 
@@ -44,8 +33,7 @@ def sql_from_line(columns, line, table):
     :return: sql command
     '''
     sql_cmd = 'INSERT INTO ' + table + ' (' + columns + ') VALUES ("' + '","'.join(str(x) for x in line.values()) + '");'
-    print(sql_cmd)
-    logger.info('The column added into  table')
+    logger.debug(sql_cmd)
     return sql_cmd
 
 
@@ -83,7 +71,7 @@ def insert_tags(cursor,jsonfile):
 
 def insert_tags_for_compet(cursor, tags_list, competition_id):
     '''
-    insert data to compet_tags table
+    insert tag_id - competition_id to compet_tags table
     :param cursor: cursor
     :param csvfilename: csv file with information about competitions
     :return: None
@@ -93,19 +81,31 @@ def insert_tags_for_compet(cursor, tags_list, competition_id):
         tag_id = cursor.fetchone()[0]
         cursor.execute("INSERT INTO compet_tags (tag_id, competition_id) VALUES (" + str(tag_id) + "," +
                        str(competition_id) + ")")
-    logger.info('`tag_id`, `competition_id` inserted into table `compet_tags`')
+    logger.debug('`tag_id`, `competition_id` inserted into table `compet_tags`' + str(competition_id))
 
 
-
-def insert_compet_tags(cursor,jsonfile):
+def insert_compet_tags(cursor, jsonfile):
+    '''
+    insert tags to compet_tags table
+    :param cursor: cursor
+    :param jsonfile: input data
+    :return: None
+    '''
     tags_dic = json.load(open(jsonfile, encoding="utf-8"))
     for link in tags_dic.keys():
         cursor.execute("SELECT competition_id FROM competitions WHERE link = '" + link + "'")
         competition_id = cursor.fetchone()[0]
-        insert_tags_for_compet(cursor,tags_dic[link], competition_id)
+        insert_tags_for_compet(cursor, tags_dic[link], competition_id)
+    logger.info("Competition tags inserted")
 
 
 def insert_teams(cursor, csv_file):
+    '''
+    insert team name into teams table
+    :param cursor: cursor
+    :param csv_file: input data
+    :return:None
+    '''
     teams = open(csv_file, newline='', encoding="utf-8")
     teams_reader = csv.DictReader(teams, delimiter=',')
     teams_set = set()
@@ -114,10 +114,18 @@ def insert_teams(cursor, csv_file):
         if row['team_name'] not in teams_set:
             teams_set.add(row['team_name'])
             cursor.execute("INSERT INTO teams (name) VALUES ('" + row['team_name'].replace("\'", "\\\'") + "')")
-        logger.info('`team_name` inserted into table `teams`')
+            logger.debug('`team_name` inserted into table `teams`' + row['team_name'])
+    logger.info("Inserted tags to compet_tags")
 
 
 def insert_leaderebord(cursor, csv_file):
+    '''
+    insert data to leadreboard table
+    :param cursor: cursor
+    :param csv_file: input_file
+    :return: None
+    '''
+
     leadereboard = open(csv_file, newline='', encoding="utf-8")
     leadereboard_reader = csv.DictReader(leadereboard, delimiter=',')
 
@@ -135,9 +143,8 @@ def insert_leaderebord(cursor, csv_file):
         try:
             cursor.execute(sq)
         except Exception as e:
-            print("can't insert leaderboard entity")
-            logger.exception("can't insert leaderboard entity into table `leaderboard`")
-        logger.info("Inserted `leaderboard entity` into table `leaderboard`")
+            logger.warning("can't insert leaderboard entity into table `leaderboard`" + str(row) + str(e))
+        logger.info("Inserted `leaderboard entities` into table `leaderboard`")
 
 
 if __name__ == '__main__':
@@ -154,8 +161,19 @@ if __name__ == '__main__':
 
     parser.add_argument('--password', type=str, help='Password to database', default='')
 
-
     args = parser.parse_args()
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+
+    file_handler = logging.FileHandler('insert_to_db.log')
+    file_handler.setLevel(logging.DEBUG)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+    logger.addHandler(logging.StreamHandler(sys.stdout))
 
     cursor, db = connect_to_db(args.db_name, args.password)
     insert_competitions(cursor, args.compet_file)

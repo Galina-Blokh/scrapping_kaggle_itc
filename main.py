@@ -89,10 +89,6 @@ if __name__ == '__main__':
     parser.add_argument('--tags_file', type=str, help='Where to store tags from competition page',
                         default='tags.json')
 
-    parser.add_argument('--log_file', type=str, help='File to store logs', action="store", default='log_scrapper.log')
-
-    # parser.add_argument('--log_level', type=str, help='Level of logging', default='INFO')
-
     args = parser.parse_args()
 
     logger = config.get_logger(__name__)

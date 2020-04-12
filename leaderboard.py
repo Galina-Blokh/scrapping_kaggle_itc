@@ -26,8 +26,8 @@ def get_from_leaderboard(driver, row, column, column_name):
         data = driver.find_element_by_xpath(xpath).text
 
     except Exception as e:
-        logger.debug("can't get column from leaderboard " + column_name + e)
-        data = None
+        logger.debug("can't get column from leaderboard " + column_name + str(e))
+        data = str(0)
     logger.debug('column collected ' + column_name)
     return data
 
@@ -71,7 +71,7 @@ def extract_for_leaderboard(links, driver):
                 res_dic[key] = get_from_leaderboard(driver, i, value, key)
             leader_board.append(res_dic)
             logger.debug("row " + str(i) + " collected from " + link)
-    logger.info('Finished extracting leaderboard from ' + link)
+    logger.info('Finished extracting leaderboards')
     return leader_board
 
 
