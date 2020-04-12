@@ -1,19 +1,8 @@
-import logging
-import sys
-
+import config
 from selenium import webdriver
 import time
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = config.get_logger(__name__)
 
-file_handler = logging.FileHandler('log_task.log')
-file_handler.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
-
-logger.addHandler(file_handler)
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 def create_driver():
     """
@@ -37,10 +26,9 @@ def get_from_leaderboard(driver, row, column, column_name):
         data = driver.find_element_by_xpath(xpath).text
 
     except Exception as e:
-        # print("can't get now", column_name, str(e))
-        logger.warning("can't get column from leaderboard")
+        logger.debug("can't get column from leaderboard " + column_name + e)
         data = None
-    logger.info('Whole row from leaderboard is collected')
+    logger.debug('column collected ' + column_name)
     return data
 
 
@@ -61,8 +49,7 @@ def extract_for_leaderboard(links, driver):
         try:
             table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table')
         except Exception as e:
-            # print('Cant find leaderbord table', link)
-            logger.warning('Cant find leaderbord table by the link')
+            logger.info('Cant find leaderbord table by the link ' + link)
             continue
 
         # detect leaderboard table type
@@ -72,13 +59,10 @@ def extract_for_leaderboard(links, driver):
             else:
                 curent_leaderboard_dic = LEADERBOARD_DICT_T2
         except Exception as e:
-            # print('Malformed leaderbord table', link)
-            logger.warning('Malformed leaderbord table')
+            logger.warning('Malformed leaderbord table' + link)
             continue
 
         num_leaders = len(table.find_elements_by_tag_name("tr"))
-        # print(link, num_leaders )
-        logger.info('point on the page with columns leaderbord table is founded')
 
         for i in range(1, num_leaders-1):
             time.sleep(0.1)
@@ -86,13 +70,12 @@ def extract_for_leaderboard(links, driver):
             for key, value in curent_leaderboard_dic.items():
                 res_dic[key] = get_from_leaderboard(driver, i, value, key)
             leader_board.append(res_dic)
-            # print(res_dic)
-    logger.info('Extracting data from leaderboard  into dictionary is finished')
+            logger.debug("row " + str(i) + " collected from " + link)
+    logger.info('Finished extracting leaderboard from ' + link)
     return leader_board
 
 
 if __name__ == '__main__':
-
 
     LINKS_LEADERBOARD_TEST = ['https://www.kaggle.com/c/passenger-screening-algorithm-challenge',
                               'https://www.kaggle.com/c/second-annual-data-science-bowl',
@@ -101,6 +84,5 @@ if __name__ == '__main__':
 
     chrome_driver = create_driver()
 
-    # print(extract_for_leaderboard(LINKS_LEADERBOARD_TEST, chrome_driver))
-    logger.info('Main in the leaderboards finished work')
+    logger.info('Main in the leaderboards finished')
 

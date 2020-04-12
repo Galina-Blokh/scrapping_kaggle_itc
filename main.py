@@ -1,3 +1,4 @@
+import config
 import sys
 from selenium import webdriver
 import json
@@ -8,7 +9,7 @@ import leaderboard
 import tags
 import geter_num_topics_prize_organizator as tpo
 import argparse
-import logging
+
 
 
 
@@ -20,7 +21,7 @@ def create_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     driver = webdriver.Chrome(chrome_options=options, executable_path='./chromedriver')
-    logger.info('Chromedriver is created')
+    logger.info('Chromedriver was created')
     return driver
 
 
@@ -38,22 +39,25 @@ def extract_for_competition(links, driver):
     for link in links:
         driver.get(link)
         time.sleep(2)
+
         res_dic = {"link": link.strip()}
         for key, value in COMPETITION_FEATS.items():
             res_dic[key] = value(driver)
+
         try:
             tags_dic[link.strip()] = tags.extract_for_tags(driver)
         except Exception as e:
-            # print("tags problem", link, e)
-            logger.warning("tags problem with the link")
+            logger.debug("no tags for link " + link + str(e))
 
         driver.get(link + "/discussion")
         time.sleep(1)
+
         res_dic["number_topics"] = tpo.get_number_of_topics(driver)
-        # print(res_dic)
+
         competition_info.append(res_dic)
-        logger.debug(res_dic)
-    logger.info('number_topics is added into result dictionary')
+        logger.debug("Collected data for link " + link)
+
+    logger.info('Collected data for competitions.')
     return competition_info, tags_dic
 
 
@@ -69,7 +73,7 @@ def dicts_to_csv(list_of_dicts, output_filename):
     writer.writeheader()
     for row in list_of_dicts:
         writer.writerow(row)
-    logger.info('the dictionary/json file is converted into csv {}'.format(output_filename))
+    logger.info('the dictionary/json file saved into csv {}'.format(output_filename))
 
 
 if __name__ == '__main__':
@@ -85,28 +89,13 @@ if __name__ == '__main__':
     parser.add_argument('--tags_file', type=str, help='Where to store tags from competition page',
                         default='tags.json')
 
-    # parser.add_argument('--log_file', type=str, help='File to store logs', action="store", default='log.txt')
+    parser.add_argument('--log_file', type=str, help='File to store logs', action="store", default='log_scrapper.log')
 
     # parser.add_argument('--log_level', type=str, help='Level of logging', default='INFO')
 
-
     args = parser.parse_args()
-    # logger = prepare_logger(args.log_file)
 
-
-
-    print("Hi! I'm starting to exctract data about kaggle competitions")
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-
-    file_handler = logging.FileHandler('log_task.log')
-    file_handler.setLevel(logging.DEBUG)
-
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    file_handler.setFormatter(formatter)
-
-    logger.addHandler(file_handler)
-    logger.addHandler(logging.StreamHandler(sys.stdout))
+    logger = config.get_logger(__name__)
 
     logger.info("Hi! I'm starting to exctract data about kaggle competitions")
 
@@ -117,20 +106,15 @@ if __name__ == '__main__':
                           "description": do.get_description_of_competition, "prize": tpo.get_prize_size,
                           "organizator_name": tpo.get_organizator_name}
 
-
-
-
-
-
     chrome_driver = create_driver()
-    links = open(args.links_file, "r").readlines()
+    competition_links = open(args.links_file, "r").readlines()
 
-    competitions_data, tags_data = extract_for_competition(links, chrome_driver)
+    competitions_data, tags_data = extract_for_competition(competition_links, chrome_driver)
     dicts_to_csv(competitions_data, args.compet_file)
 
-    leader_board = leaderboard.extract_for_leaderboard(links, chrome_driver)
+    leader_board = leaderboard.extract_for_leaderboard(competition_links, chrome_driver)
     dicts_to_csv(leader_board, args.leader_file)
 
     with open(args.tags_file, 'w') as file:
         json.dump(tags_data, file)
-    logger.info('main in the main is finished')
+    logger.info('Scrapping is finished')
