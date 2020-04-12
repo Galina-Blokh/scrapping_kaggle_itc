@@ -3,6 +3,7 @@ import config
 
 logger = config.get_logger(__name__)
 
+
 def extract_competitors(driver):
     """
     extract number of competitors from competition page
@@ -78,7 +79,7 @@ def get_number_of_entries(driver):
         return '0'
 
     logger.debug('Collected `number of entries` from competition page')
-    return num_of_entries.replace(',','')
+    return num_of_entries.replace(',', '')
 
 
 def get_description_of_competition(driver):
@@ -88,7 +89,8 @@ def get_description_of_competition(driver):
     :return: description
     """
     try:
-        description_text = driver.find_element_by_xpath('//*[@id="competition-overview__nav-content-container"]/div[2]/div/div').text
+        description_text = driver.find_element_by_xpath(
+            '//*[@id="competition-overview__nav-content-container"]/div[2]/div/div').text
     except:
         logger.debug('Cannot get `description` from competition page')
         return None
@@ -115,7 +117,8 @@ def get_start_of_competition(driver):
     :return: start date as datetime
     '''
     try:
-        date_start = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[3]/div[2]/span')
+        date_start = driver.find_element_by_xpath(
+            '//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[3]/div[2]/span')
     except:
         logger.debug("Can't get `date_start of the competition`. return '1900-01-01'")
         return '1900-01-01'
@@ -130,16 +133,15 @@ def get_end_of_competition(driver):
        :return: end date as datetime
        '''
     try:
-        date_end = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[4]/div[2]/span')
+        date_end = driver.find_element_by_xpath(
+            '//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[4]/div[2]/span')
     except:
         try:
-            #try to get copmetiton_end data for competitons whith deadline and competitions end with different dates
-            date_end = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[5]/div[2]/span')
+            # try to get copmetiton_end data for competitons whith deadline and competitions end with different dates
+            date_end = driver.find_element_by_xpath(
+                '//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[5]/div[2]/span')
         except:
             logger.debug("Can't get `date_end of the competition`. return '1900-01-01'")
             return '1900-01-01'
     logger.debug('Got the `date_end` of the competition')
     return to_sql_datetime(date_end.get_attribute('data-tooltip'))
-
-
-

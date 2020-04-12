@@ -188,4 +188,4 @@ if __name__ == '__main__':
 
     insert_leaderebord(cursor, args.leader_file)
     db.commit()
-    logger.info('Main in `incert_to_db.py is finished')
+    logger.info('Main in `insert_to_db.py is finished')
