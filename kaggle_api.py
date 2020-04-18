@@ -1,5 +1,3 @@
-import re
-import sys
 from kaggle.api.kaggle_api_extended import KaggleApi
 import config
 
