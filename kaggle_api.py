@@ -5,6 +5,12 @@ logger = config.get_logger(__name__)
 
 
 def get_kenel_for_compet(compet_ref, api):
+    """
+    Get information about kernels for competition
+    :param compet_ref: competition name
+    :param api: kernel api
+    :return: list of dictionaries
+    """
     kernels = api.kernels_list(search=compet_ref)
     kernel_list = []
     for kernel in kernels:
@@ -12,6 +18,9 @@ def get_kenel_for_compet(compet_ref, api):
                             'author': kernel.author,
                             'name': kernel.title,
                             'votes': kernel.totalVotes})
+
+    logger.debug('Collected `kernels` from page')
+
     return kernel_list
 
 

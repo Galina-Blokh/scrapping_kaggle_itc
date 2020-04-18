@@ -89,7 +89,7 @@ if __name__ == '__main__':
                         default='tags.json')
     parser.add_argument('--competitions_api_file', type=str, help='Where to store data for competitons from API',
                         default='competitions_api_file.csv')
-    parser.add_argument('--kernels_file', type=str, help='Where to store kernelsfrom competition page',
+    parser.add_argument('--kernels_file', type=str, help='Where to store kernels from competition page',
                         default='kernels_file.csv')
 
 

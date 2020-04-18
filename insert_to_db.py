@@ -147,6 +147,12 @@ def insert_leaderebord(cursor, csv_file):
         logger.info("Inserted `leaderboard entities` into table `leaderboard`")
 
 def insert_kernels(cursor, csvfilename):
+    '''
+    insert data to kernels table
+    :param cursor: cursor
+    :param csv_file: input_file
+    :return: None
+    '''
     csv_file = open(csvfilename, newline='', encoding="utf-8")
     comp_reader = csv.DictReader(csv_file, delimiter=',')
 
@@ -167,6 +173,31 @@ def insert_kernels(cursor, csvfilename):
         logger.debug("Inserted `kernels entities` into table `kernels`")
 
 
+def update_competitions(cursor, csvfilename):
+    '''
+    update competitions table with information from kaggle API
+    :param cursor: cursor
+    :param csv_file: input_file
+    :return: None
+    '''
+    csv_file = open(csvfilename, newline='', encoding="utf-8")
+    comp_reader = csv.DictReader(csv_file, delimiter=',')
+
+    for row in comp_reader:
+        cursor.execute("SELECT competition_id FROM competitions WHERE link = '" + row['link'] + "'")
+        if cursor.rowcount == 0:
+            logger.info('there are no competition for update ' + row['link'])
+            continue
+        competition_id = cursor.fetchone()[0]
+        sq = "UPDATE competitions SET   got_by_api = 1, category = '" + row['category'] + "', maxDailySubmissions = " +\
+        row['maxDailySubmissions'] + " WHERE competition_id = " + str(competition_id)
+        try:
+            cursor.execute(sq)
+        except Exception as e:
+            logger.warning("can't insert got_by_api, category to competitions table'`" + str(row) + str(e))
+        logger.debug("Inserted got_by_api, category to competitions table")
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Insert to database')
 
@@ -183,6 +214,9 @@ if __name__ == '__main__':
 
     parser.add_argument('--kernels_file', type=str, help='Where to store kernelsfrom competition page',
                         default='kernels_file.csv')
+
+    parser.add_argument('--competitions_api_file', type=str, help='Where to store data for competitons from API',
+                        default='competitions_api_file.csv')
 
     args = parser.parse_args()
 
@@ -213,6 +247,9 @@ if __name__ == '__main__':
     db.commit()
 
     insert_kernels(cursor, args.kernels_file)
+    db.commit()
+
+    update_competitions(cursor, args.competitions_api_file)
     db.commit()
 
     logger.info('Main in `insert_to_db.py is finished')
