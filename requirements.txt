@@ -15,3 +15,5 @@ python-dateutil==2.8.0
 requests==2.22.0
 webencodings==0.5.1
 xlrd==1.2.0
+
+kaggle~=1.5.6
