@@ -27,7 +27,7 @@ def get_kenel_for_compet(compet_ref, api):
 def competitions_new_search():
     """ Searching competitions
      creates api connection and takes competitions data by all existing pages
-     :returns dict of new competitions
+     :returns list of dict  new competitions and list of dict  kernels
      """
     logger.info('competitions_new_search starts to create New_data dictionary  for competition ')
 
@@ -41,12 +41,11 @@ def competitions_new_search():
         print('page {}'.format(i))
         # competitions is a list of competition objects.
         # iterate though each item to access individual competition
-        # #date = datetime obj
         for comp in competitions:
             d = {'link': comp.url,
                  'title': str(comp.title),
                  'description': comp.description,
-                 'prize': str(comp.reward).replace('$','').replace(',',''),
+                 'prize': str(comp.reward).replace('$', '').replace(',', ''),
                  'enabledDate': str(comp.enabledDate),
                  'deadline': str(comp.deadline),
                  'category': comp.category,
@@ -61,23 +60,19 @@ def competitions_new_search():
                 str(int(d['prize']))
             except:
                 d['prize'] = '0'
-
             list_compet_new.append(d)
-
-            kernel_for_compet += get_kenel_for_compet(comp.ref,api)
-
+            kernel_for_compet += get_kenel_for_compet(comp.ref, api)
         i += 1
         if len(competitions) == 0:
-            print('download complete')
-            logger.info('New_data dictionary  for competition is created')
+            logger.info("New Data using Kaggle API is collected")
             return list_compet_new, kernel_for_compet
 
 
 def main():
     """prints call of the functions"""
-    listic = competitions_new_search()
-    for item in listic:
-        print(item)
+    competitions_new_search()
+    logger.info("Main in kaggle_api.py is finished")
+
 
 
 if __name__ == '__main__':

@@ -7,7 +7,7 @@ logger = config.get_logger(__name__)
 
 def create_driver():
     """
-    create silenium chrome driver
+    creates selenium chrome driver
     :return: driver
     """
     options = webdriver.ChromeOptions()
@@ -18,9 +18,9 @@ def create_driver():
 
 def get_from_tag(driver, number):
     """
-    get tag by number
+    get one tag by number
     :param driver: selenium driver
-    :param number: tag number
+    :param number: tags number
     :return: string
     """
     try:
@@ -29,8 +29,7 @@ def get_from_tag(driver, number):
         tag = driver.find_element_by_xpath(xpath).text
 
     except Exception as e:
-        # print("can't get now tag {}".format(str(number)))
-        logger.info("can't get tag " + str(number))
+        logger.info("Can't get tag: " + str(number))
         tag = None
     return tag
 

@@ -10,8 +10,6 @@ CREATE TABLE teams (
   name  varchar(256)
 );
 
-
-
 CREATE TABLE competitions (
   competition_id int UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
   organizator_name varchar(256),
