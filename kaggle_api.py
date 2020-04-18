@@ -6,6 +6,17 @@ import config
 logger = config.get_logger(__name__)
 
 
+def get_kenel_for_compet(compet_ref, api):
+    kernels = api.kernels_list(search=compet_ref)
+    kernel_list = []
+    for kernel in kernels:
+        kernel_list.append({'link': config.BASE_URL + compet_ref,
+                            'author': kernel.author,
+                            'name': kernel.title,
+                            'votes': kernel.totalVotes})
+    return kernel_list
+
+
 def competitions_new_search():
     """ Searching competitions
      creates api connection and takes competitions data by all existing pages
@@ -17,6 +28,7 @@ def competitions_new_search():
     api.authenticate()
     i = 0
     list_compet_new = []
+    kernel_for_compet = []
     while True:
         competitions = api.competitions_list(category="all", page=i)
         print('page {}'.format(i))
@@ -24,7 +36,7 @@ def competitions_new_search():
         # iterate though each item to access individual competition
         # #date = datetime obj
         for comp in competitions:
-            d = {'url': comp.url,
+            d = {'link': comp.url,
                  'title': str(comp.title),
                  'description': comp.description,
                  'prize': str(comp.reward).replace('$','').replace(',',''),
@@ -44,14 +56,14 @@ def competitions_new_search():
                 d['prize'] = '0'
 
             list_compet_new.append(d)
+
+            kernel_for_compet += get_kenel_for_compet(comp.ref,api)
+
         i += 1
         if len(competitions) == 0:
             print('download complete')
             logger.info('New_data dictionary  for competition is created')
-            return list_compet_new
-
-
-
+            return list_compet_new, kernel_for_compet
 
 
 def main():
