@@ -146,6 +146,26 @@ def insert_leaderebord(cursor, csv_file):
             logger.warning("can't insert leaderboard entity into table `leaderboard`" + str(row) + str(e))
         logger.info("Inserted `leaderboard entities` into table `leaderboard`")
 
+def insert_kernels(cursor, csvfilename):
+    csv_file = open(csvfilename, newline='', encoding="utf-8")
+    comp_reader = csv.DictReader(csv_file, delimiter=',')
+
+    for row in comp_reader:
+        cursor.execute("SELECT competition_id FROM competitions WHERE link = '" + row['link'] + "'")
+        if cursor.rowcount == 0:
+            logger.info('there are no competition for the kernel ' + row['link'])
+            continue
+        competition_id = cursor.fetchone()[0]
+        del row['link']
+        row['competition_id'] = str(competition_id)
+        columns = ','.join(row.keys())
+        sq = sql_from_line(columns, row, 'kernels')
+        try:
+            cursor.execute(sq)
+        except Exception as e:
+            logger.warning("can't insert kernel entity into table 'kernels'`" + str(row) + str(e))
+        logger.debug("Inserted `kernels entities` into table `kernels`")
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Insert to database')
@@ -160,6 +180,9 @@ if __name__ == '__main__':
     parser.add_argument('--db_name', type=str, help='Name of database to build', default='KaggleITC')
 
     parser.add_argument('--password', type=str, help='Password to database', default='')
+
+    parser.add_argument('--kernels_file', type=str, help='Where to store kernelsfrom competition page',
+                        default='kernels_file.csv')
 
     args = parser.parse_args()
 
@@ -188,4 +211,8 @@ if __name__ == '__main__':
 
     insert_leaderebord(cursor, args.leader_file)
     db.commit()
+
+    insert_kernels(cursor, args.kernels_file)
+    db.commit()
+
     logger.info('Main in `insert_to_db.py is finished')

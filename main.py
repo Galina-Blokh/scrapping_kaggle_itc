@@ -8,6 +8,7 @@ import leaderboard
 import tags
 import geter_num_topics_prize_organizator as tpo
 import argparse
+import kaggle_api
 
 
 def create_driver():
@@ -86,6 +87,11 @@ if __name__ == '__main__':
                         default='kaggle_leaders.csv')
     parser.add_argument('--tags_file', type=str, help='Where to store tags from competition page',
                         default='tags.json')
+    parser.add_argument('--competitions_api_file', type=str, help='Where to store data for competitons from API',
+                        default='competitions_api_file.csv')
+    parser.add_argument('--kernels_file', type=str, help='Where to store kernelsfrom competition page',
+                        default='kernels_file.csv')
+
 
     args = parser.parse_args()
 
@@ -109,6 +115,14 @@ if __name__ == '__main__':
     leader_board = leaderboard.extract_for_leaderboard(competition_links, chrome_driver)
     dicts_to_csv(leader_board, args.leader_file)
 
+    competitions_api, kernels = kaggle_api.competitions_new_search()
+    dicts_to_csv(competitions_api, args.competitions_api_file)
+    dicts_to_csv(kernels, args.kernels_file)
+
     with open(args.tags_file, 'w') as file:
         json.dump(tags_data, file)
+
+
     logger.info('Scrapping is finished')
+
+

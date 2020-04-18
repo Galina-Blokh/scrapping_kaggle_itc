@@ -49,3 +49,9 @@ https://www.kaggle.com/c/3rd-ml100marathon-midterm
 https://www.kaggle.com/c/11785-f19-hw2p2-classification-slack
 https://www.kaggle.com/c/best-home3
 https://www.kaggle.com/c/fia-machine-learning-t7
+https://www.kaggle.com/c/digit-recognizer
+https://www.kaggle.com/c/house-prices-advanced-regression-techniques
+https://www.kaggle.com/c/nlp-getting-started
+https://www.kaggle.com/c/jigsaw-multilingual-toxic-comment-classification
+https://www.kaggle.com/c/flower-classification-with-tpus
+https://www.kaggle.com/c/herbarium-2020-fgvc7

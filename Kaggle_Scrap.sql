@@ -49,7 +49,7 @@ CREATE TABLE compet_tags (
   competition_id int
 );
 
-CREATE TABLE krenels (
+CREATE TABLE kernels (
   kernel_id int UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
   competition_id int,
   author varchar(250),
