@@ -20,17 +20,17 @@ fi
 
 stage=$1
 
-if [ $stage -lt 2 ]; then
+if [ "$stage" -lt 2 ]; then
     echo "Stage 1"
     python3 get_links.py --links_file $LINKS_FILE
 fi
 
-if [ $stage -lt 3 ]; then
+if [ "$stage" -lt 3 ]; then
     echo "Stage 2"
     python3 main.py --links_file $LINKS_FILE --compet_file $COMPET_FILE --leader_file $LEADERS_FILE --tags_file $TAGS_FILE
 fi
 
-if [ $stage -lt 4 ]; then
+if [ "$stage" -lt 4 ]; then
     echo "Stage 3"
     mysql -u root --password=$PASSWORD < Kaggle_Scrap.sql
     python3 insert_to_db.py --compet_file $COMPET_FILE --leader_file $LEADERS_FILE --tags_file $TAGS_FILE --password $PASSWORD
