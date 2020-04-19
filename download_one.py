@@ -160,7 +160,7 @@ def extract_number_topic(driver):
 
     except:
         logger.debug("Can't collect `number_topics` from competition page")
-        return 0
+        return '0'
     logger.debug("Collected `number_topics` from competition page")
 
     return number_topics
