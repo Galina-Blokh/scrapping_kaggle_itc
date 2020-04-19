@@ -121,7 +121,6 @@ def insert_teams(cursor, csv_file):
             teams_set.add(row['team_name'])
             cursor.execute("INSERT INTO teams (name) VALUES ('" + row['team_name'].replace("\'", "\\\'") + "')")
             logger.debug('Inserted `team_name` into table `teams`' + row['team_name'])
-    logger.info("Inserted `tags` to `compet_tags`")
             try:
                 cursor.execute("INSERT INTO teams (name) VALUES ('" + row['team_name'].replace("\'", "\\\'") + "')")
             except Exception as e:
@@ -143,6 +142,7 @@ def insert_leaderebord(cursor, csv_file):
     leadereboard_reader = csv.DictReader(leadereboard, delimiter=',')
 
     for row in leadereboard_reader:
+        logger.debug("Leadeboard data for competition " + row['link'])
         try:
             cursor.execute("SELECT team_id FROM teams WHERE name = '" + row['team_name'].replace("\'", "\\\'") + "'")
         except Exception as e:
@@ -150,7 +150,6 @@ def insert_leaderebord(cursor, csv_file):
         if cursor.rowcount == 0:
             logger.info('there are no team for the kernel ' + row['link'])
             continue
-
 
         team_id = cursor.fetchone()[0]
         cursor.execute("SELECT competition_id FROM competitions WHERE link = '" + row['link'] + "'")

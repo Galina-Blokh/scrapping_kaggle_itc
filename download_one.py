@@ -147,7 +147,6 @@ def get_end_of_competition(driver):
     return to_sql_datetime(date_end.get_attribute('data-tooltip'))
 
 
-#####
 def extract_number_topic(driver):
     """
     extract number of topics from competition page
