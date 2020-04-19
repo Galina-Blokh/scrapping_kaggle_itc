@@ -48,11 +48,11 @@ def get_links_from_site(driver, num_pages=450):
     competition_links = []
     for i in range(num_pages):
         competition_links += get_links_from_page(driver)
-        logger.info('collected links from page ' + str(i+1))
+        logger.info('Collected `links` from page ' + str(i+1))
         driver.find_element_by_xpath(
             '//*[@id="root"]/div/div[1]/div[2]/div/div/div[2]/div[2]/div[3]/div/button[2]').click()
         time.sleep(5)
-    logger.info('Collected competition links from pages')
+    logger.info('Collected all competition links from pages')
     return competition_links
 
 
@@ -92,3 +92,4 @@ if __name__ == '__main__':
 
     logger.info("Start to collect competition links from Kaggle.com")
     extract_links_to_file(args.links_file)
+    logger.info("Main in get_links.py is finished")

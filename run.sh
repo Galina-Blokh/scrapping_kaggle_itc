@@ -11,7 +11,7 @@ if [ $# != 1 ]; then
   echo "This script scrap data from kaggle.com and store it to db."
   echo "NB If your database required password, please set up in this script."
   echo "Usage: $0  <start_stage>"
-  echo " e.g.: start_stage 1 - get competiton links, extract data, create db and store to db"
+  echo " e.g.: start_stage 1 - get competition links, extract data, create db and store to db"
   echo "       start_stage 2 - extract data, store to db"
   echo "       start_stage 3 - only create db and store to db"
   echo "example:$0 2"

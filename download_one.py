@@ -33,7 +33,7 @@ def extract_teams(driver):
         teams = int(driver.find_element_by_xpath(
             '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[1]/p[1]').text)
     except:
-        logger.debug("Can't collect `number teams`from a page")
+        logger.debug("Can't collect `number of teams` from a page")
         teams = '0'
     logger.debug('Collected `number of teams` from competition page')
     return teams
@@ -92,7 +92,7 @@ def get_description_of_competition(driver):
         description_text = driver.find_element_by_xpath(
             '//*[@id="competition-overview__nav-content-container"]/div[2]/div/div').text
     except:
-        logger.debug('Cannot get `description` from competition page')
+        logger.debug("Can't get `description` from competition page")
         return None
 
     logger.debug('Collected `description` from competition page')
@@ -112,7 +112,7 @@ def to_sql_datetime(date_str):
 
 def get_start_of_competition(driver):
     '''
-    get competiton start
+    get competition start
     :param driver: chrome driver
     :return: start date as datetime
     '''
@@ -128,7 +128,7 @@ def get_start_of_competition(driver):
 
 def get_end_of_competition(driver):
     '''
-       get competiton end
+       get competition end
        :param driver: chrome driver
        :return: end date as datetime
        '''
@@ -137,7 +137,7 @@ def get_end_of_competition(driver):
             '//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[4]/div[2]/span')
     except:
         try:
-            # try to get copmetiton_end data for competitons whith deadline and competitions end with different dates
+            # try to get copmetition_end data for competitons whith deadline and competitions end with different dates
             date_end = driver.find_element_by_xpath(
                 '//*[@id="site-content"]/div[2]/div/div[2]/div[3]/div/div/div/div/div/div[5]/div[2]/span')
         except:

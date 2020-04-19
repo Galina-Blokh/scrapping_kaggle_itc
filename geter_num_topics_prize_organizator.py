@@ -23,9 +23,9 @@ def get_prize_size(driver):
         prize = driver.find_element_by_xpath(config.LINK_PRIZE_SIZE).text
         prize_size = str(re.sub('\D', '', prize))
     except Exception as e:
-        logger.debug("can't get prize for the link" + str(e))
+        logger.debug("Can't get `prize` for the link" + str(e))
         return '0'
-    logger.debug('Prize extracted from competition page')
+    logger.debug('`Prize` extracted from competition page')
     return prize_size.replace(',', '')
 
 
@@ -68,3 +68,4 @@ if __name__ == '__main__':
     get_prize_size(test_driver)
     get_organizator_name(test_driver)
     get_number_of_topics(test_driver)
+    logger.info("Main in geter_num_topics_prize_organizator.py is finished")
