@@ -84,7 +84,7 @@ def extract_for_leaderboard(links, driver):
             else:
                 curent_leaderboard_dic = config.LEADERBOARD_DICT_T2
         except Exception as e:
-            logger.warning('Malformed leaderbord table' + link)
+            logger.warning('Malformed leaderbord table ' + link)
             continue
 
         num_leaders = len(table.find_elements_by_tag_name("tr"))

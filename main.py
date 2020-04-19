@@ -51,7 +51,7 @@ def extract_for_competition(links, driver):
         driver.get(link + "/discussion")
         time.sleep(1)
 
-        res_dic["number_topics"] = tpo.get_number_of_topics(driver)
+        res_dic["number_topics"] = do.extract_number_topic(driver)
 
         competition_info.append(res_dic)
         logger.info("Collected data for link " + link)

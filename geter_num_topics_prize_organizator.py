@@ -46,21 +46,21 @@ def get_organizator_name(driver):
     return organizator
 
 
-def get_number_of_topics(driver):
-    """
-    extract  number of topics from competition/ page
-    :param driver: chrome driver
-    :return: int number of topics
-    """
-    try:
-        topics = driver.find_element_by_xpath(config.LINK_TOPIC).get_attribute("innerHTML")
-        number_topics = str(re.sub('\D', '', topics))
-    except Exception as e:
-        logger.debug("Can't get `num_topics` from competition page" + str(e))
-        return '0'
-
-    logger.debug("Collected `num_topics` from competition page")
-    return number_topics.replace(',', '')
+# def get_number_of_topics(driver):
+#     """
+#     extract  number of topics from competition/ page
+#     :param driver: chrome driver
+#     :return: int number of topics
+#     """
+#     try:
+#         topics = driver.find_element_by_xpath(config.LINK_TOPIC).get_attribute("innerHTML")
+#         number_topics = str(re.sub('\D', '', topics))
+#     except Exception as e:
+#         logger.debug("Can't get `num_topics` from competition page" + str(e))
+#         return '0'
+#
+#     logger.debug("Collected `num_topics` from competition page")
+#     return number_topics.replace(',', '')
 
 
 if __name__ == '__main__':

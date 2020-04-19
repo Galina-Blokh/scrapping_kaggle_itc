@@ -51,7 +51,10 @@ def insert_competitions(cursor, csvfilename):
 
     for line in comp_reader:
         sq = sql_from_line(columns, line, 'competitions')
-        cursor.execute(sq)
+        try:
+            cursor.execute(sq)
+        except Exception as e:
+            logger.warning("Can't insert competition " + line['link'] + str(e))
     logger.info('`Competitions` data is written from csv into db column')
 
 
@@ -94,6 +97,9 @@ def insert_compet_tags(cursor, jsonfile):
     tags_dic = json.load(open(jsonfile, encoding="utf-8"))
     for link in tags_dic.keys():
         cursor.execute("SELECT competition_id FROM competitions WHERE link = '" + link + "'")
+        if cursor.rowcount == 0:
+            logger.warning("Can't get competition from " + link)
+            continue
         competition_id = cursor.fetchone()[0]
         insert_tags_for_compet(cursor, tags_dic[link], competition_id)
     logger.info("Competition tags inserted")
@@ -113,7 +119,11 @@ def insert_teams(cursor, csv_file):
     for row in teams_reader:
         if row['team_name'] not in teams_set:
             teams_set.add(row['team_name'])
-            cursor.execute("INSERT INTO teams (name) VALUES ('" + row['team_name'].replace("\'", "\\\'") + "')")
+            try:
+                cursor.execute("INSERT INTO teams (name) VALUES ('" + row['team_name'].replace("\'", "\\\'") + "')")
+            except Exception as e:
+                logger.warning("We don't like teams with slash in names")
+
             logger.debug('`team_name` inserted into table `teams`' + row['team_name'])
     logger.info("Inserted tags to compet_tags")
 
@@ -125,14 +135,25 @@ def insert_leaderebord(cursor, csv_file):
     :param csv_file: input_file
     :return: None
     '''
-
     leadereboard = open(csv_file, newline='', encoding="utf-8")
     leadereboard_reader = csv.DictReader(leadereboard, delimiter=',')
 
     for row in leadereboard_reader:
-        cursor.execute("SELECT team_id FROM teams WHERE name = '" + row['team_name'].replace("\'", "\\\'") + "'")
+        try:
+            cursor.execute("SELECT team_id FROM teams WHERE name = '" + row['team_name'].replace("\'", "\\\'") + "'")
+        except Exception as e:
+            logger.warning("We don't like teams with slash in names")
+        if cursor.rowcount == 0:
+            logger.info('there are no team for the kernel ' + row['link'])
+            continue
+
+
         team_id = cursor.fetchone()[0]
         cursor.execute("SELECT competition_id FROM competitions WHERE link = '" + row['link'] + "'")
+        if cursor.rowcount == 0:
+            logger.warning("Can't get competition for " + row['link'])
+            continue
+
         competition_id = cursor.fetchone()[0]
         del row['team_name']
         del row['link']
