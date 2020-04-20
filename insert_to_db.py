@@ -119,9 +119,8 @@ def insert_teams(cursor, csv_file):
     for row in teams_reader:
         if row['team_name'] not in teams_set:
             teams_set.add(row['team_name'])
-            cursor.execute("INSERT INTO teams (name) VALUES ('" + row['team_name'].replace("\'", "\\\'") + "')")
-            logger.debug('Inserted `team_name` into table `teams`' + row['team_name'])
-    logger.info("Inserted `tags` to `compet_tags`")
+            # cursor.execute("INSERT INTO teams (name) VALUES ('" + row['team_name'].replace("\'", "\\\'") + "')")
+            # logger.debug('Inserted `team_name` into table `teams`' + row['team_name'])
             try:
                 cursor.execute("INSERT INTO teams (name) VALUES ('" + row['team_name'].replace("\'", "\\\'") + "')")
             except Exception as e:
@@ -224,6 +223,10 @@ def update_competitions(cursor, csvfilename):
         logger.debug("Inserted `got_by_api`, category to `competitions` table")
 
 
+def create_index(cursor):
+    cursor.execute("CREATE INDEX link_idx ON competitions (link)")
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Insert to database')
 
@@ -260,6 +263,8 @@ if __name__ == '__main__':
 
     cursor, db = connect_to_db(args.db_name, args.password)
     insert_competitions(cursor, args.compet_file)
+    db.commit()
+    create_index(cursor)
     db.commit()
     insert_tags(cursor, args.tags_file)
     db.commit()
