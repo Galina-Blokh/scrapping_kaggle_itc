@@ -223,6 +223,11 @@ def update_competitions(cursor, csvfilename):
         logger.debug("Inserted `got_by_api`, category to `competitions` table")
 
 
+def create_index(cursor):
+    cursor.execute("CREATE INDEX link_idx ON competitions (link)")
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Insert to database')
 
@@ -260,6 +265,8 @@ if __name__ == '__main__':
     cursor, db = connect_to_db(args.db_name, args.password)
     insert_competitions(cursor, args.compet_file)
     db.commit()
+    create_index(cursor)
+    db.commit()
     insert_tags(cursor, args.tags_file)
     db.commit()
     insert_compet_tags(cursor, args.tags_file)
@@ -276,5 +283,6 @@ if __name__ == '__main__':
 
     update_competitions(cursor, args.competitions_api_file)
     db.commit()
+
 
     logger.info('`Main` in `insert_to_db.py` is finished')
