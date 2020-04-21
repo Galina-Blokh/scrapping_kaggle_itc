@@ -21,7 +21,7 @@ def create_driver():
 def get_prize_size(driver):
     """
    extract prize size from competition page
-   :param driver: chrome driver
+   :param driver: firefox driver
    :return: int prize size
    """
     try:
@@ -37,7 +37,7 @@ def get_prize_size(driver):
 def get_organizator_name(driver):
     """
    extract organizator name from competition page
-   :param driver: chrome driver
+   :param driver: firefox driver
    :return: str organizator name
    """
     try:

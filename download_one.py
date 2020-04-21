@@ -7,7 +7,7 @@ logger = config.get_logger(__name__)
 def extract_competitors(driver):
     """
     extract number of competitors from competition page
-    :param driver: chrome driver
+    :param driver: firefox driver
     :return: number of competitors
     """
     try:
@@ -26,7 +26,7 @@ def extract_competitors(driver):
 def extract_teams(driver):
     """
     extract number of teams from competition page
-    :param driver: chrome driver
+    :param driver: firefox driver
     :return: number of teams
     """
     try:
@@ -42,7 +42,7 @@ def extract_teams(driver):
 def extract_header(driver):
     """
     extract header from competition page
-    :param driver: chrome driver
+    :param driver: firefox driver
     :return: number of teams
     """
     try:
@@ -64,7 +64,7 @@ def extract_header(driver):
 def get_number_of_entries(driver):
     """
     extract  number of entries from competition page
-    :param driver: chrome driver
+    :param driver: firefox driver
     :return: number of entries
     """
     entries_xpath = '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[3]/p[1]/span'
@@ -85,7 +85,7 @@ def get_number_of_entries(driver):
 def get_description_of_competition(driver):
     """
     extract description from competition page
-    :param driver: chrome driver
+    :param driver: firefox driver
     :return: description
     """
     try:
@@ -113,7 +113,7 @@ def to_sql_datetime(date_str):
 def get_start_of_competition(driver):
     '''
     get competition start
-    :param driver: chrome driver
+    :param driver: firefox driver
     :return: start date as datetime
     '''
     try:
@@ -129,7 +129,7 @@ def get_start_of_competition(driver):
 def get_end_of_competition(driver):
     '''
        get competition end
-       :param driver: chrome driver
+       :param driver: firefox driver
        :return: end date as datetime
        '''
     try:
@@ -150,7 +150,7 @@ def get_end_of_competition(driver):
 def extract_number_topic(driver):
     """
     extract number of topics from competition page
-    :param driver: chrome driver
+    :param driver: firefox driver
     :return: int
     """
     try:
