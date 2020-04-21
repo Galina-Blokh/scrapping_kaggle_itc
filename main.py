@@ -9,17 +9,18 @@ import tags
 import geter_num_topics_prize_organizator as tpo
 import argparse
 import kaggle_api
-
+from selenium.webdriver.firefox.options import Options
 
 def create_driver():
     """
     create selenium chrome driver
     :return: driver
     """
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    driver = webdriver.Chrome(chrome_options=options, executable_path='./chromedriver')
-    logger.info('Chromedriver was created')
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options, executable_path=r'./geckodriver')
+    driver.get("https://www.kaggle.com/search?q=in%3Acompetitions")
+    time.sleep(5)
     return driver
 
 

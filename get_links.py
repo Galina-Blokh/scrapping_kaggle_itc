@@ -3,7 +3,7 @@ import sys
 from selenium import webdriver
 import time
 import argparse
-
+from selenium.webdriver.firefox.options import Options
 
 def get_links_from_page(my_webpage):
     """
@@ -30,9 +30,10 @@ def connect():
     create chrome driver
     :return: chrome driver
     """
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    driver = webdriver.Chrome(chrome_options=options, executable_path='./chromedriver')
+
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options, executable_path=r'./geckodriver')
     driver.get("https://www.kaggle.com/search?q=in%3Acompetitions")
     time.sleep(5)
     return driver
