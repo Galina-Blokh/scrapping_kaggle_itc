@@ -1,18 +1,20 @@
 from selenium import webdriver
 import time
 import config
+from selenium.webdriver.firefox.options import Options
 
 logger = config.get_logger(__name__)
 
 
 def create_driver():
     """
-    creates selenium chrome driver
+    create selenium firefox  driver
     :return: driver
     """
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    driver = webdriver.Chrome(chrome_options=options, executable_path='./chromedriver')
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options, executable_path=r'./geckodriver')
+    logger.info('Firefox driver was created')
     return driver
 
 
@@ -37,7 +39,7 @@ def get_from_tag(driver, number):
 def extract_for_tags(driver):
     """
     collect tags from competition pages
-    :param driver: chrome driver
+    :param driver: firefox  driver
     :return: list of dictionaries with extracted data
     """
     try:

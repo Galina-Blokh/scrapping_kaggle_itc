@@ -13,14 +13,13 @@ from selenium.webdriver.firefox.options import Options
 
 def create_driver():
     """
-    create selenium chrome driver
+    create selenium firefox  driver
     :return: driver
     """
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options, executable_path=r'./geckodriver')
-    driver.get("https://www.kaggle.com/search?q=in%3Acompetitions")
-    time.sleep(5)
+    logger.info('Firefox driver was created')
     return driver
 
 
@@ -28,7 +27,7 @@ def extract_for_competition(links, driver):
     """
     collect data from competition pages
     :param links: list of links to kaggle competitions pages
-    :param driver: chrome driver
+    :param driver: firefox  driver
     :return: list of dictionaries with extracted data; dictionary with tags
     """
     logger.info("Extracting competition data...")
@@ -105,13 +104,13 @@ if __name__ == '__main__':
                          "description": do.get_description_of_competition, "prize": tpo.get_prize_size,
                          "organizator_name": tpo.get_organizator_name}
 
-    chrome_driver = create_driver()
+    firefox_driver = create_driver()
     competition_links = open(args.links_file, "r").readlines()
 
-    competitions_data, tags_data = extract_for_competition(competition_links, chrome_driver)
+    competitions_data, tags_data = extract_for_competition(competition_links, firefox_driver)
     dicts_to_csv(competitions_data, args.compet_file)
 
-    leader_board = leaderboard.extract_for_leaderboard(competition_links, chrome_driver)
+    leader_board = leaderboard.extract_for_leaderboard(competition_links, firefox_driver)
     dicts_to_csv(leader_board, args.leader_file)
 
     competitions_api, kernels = kaggle_api.competitions_new_search()

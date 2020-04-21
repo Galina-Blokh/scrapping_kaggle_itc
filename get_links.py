@@ -27,22 +27,22 @@ def get_links_from_page(my_webpage):
 
 def connect():
     """
-    create chrome driver
-    :return: chrome driver
+    create firefox driver
+    :return: firefox  driver
     """
-
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options, executable_path=r'./geckodriver')
     driver.get("https://www.kaggle.com/search?q=in%3Acompetitions")
     time.sleep(5)
+    logger.info('Firefox driver was created. Connected to kaggle')
     return driver
 
 
 def get_links_from_site(driver, num_pages=450):
     """
     get competition links from kaggle site
-    :param driver: chrome driver
+    :param driver: firefox  driver
     :param num_pages: number of pages to scrap
     :return: list of links
     """
