@@ -71,8 +71,12 @@ def extract_for_leaderboard(links, driver):
     leader_board = []
 
     for link in links:
-        driver.get(link + "/leaderboard")
-        time.sleep(2)
+        try:
+            driver.get(link + "/leaderboard")
+            time.sleep(1)
+        except Exception as e:
+            logger.info("Can't get link:  " + link + "/leaderboard")
+            continue
 
         try:
             table = driver.find_element_by_xpath('//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table')

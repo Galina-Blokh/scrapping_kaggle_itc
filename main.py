@@ -35,8 +35,12 @@ def extract_for_competition(links, driver):
     tags_dic = {}
 
     for link in links:
-        driver.get(link)
-        time.sleep(2)
+        try:
+            driver.get(link)
+            time.sleep(1)
+        except Exception as e:
+            logger.warning("Can't get `link` " + link + str(e))
+            continue
 
         res_dic = {"link": link.strip()}
         for key, value in COMPETITION_FEATS.items():
@@ -47,9 +51,13 @@ def extract_for_competition(links, driver):
             logger.info("Extracting `tags` for " + link)
         except Exception as e:
             logger.debug("no `tags` for `link` " + link + str(e))
+        try:
+            driver.get(link + "/discussion")
+            time.sleep(1)
+        except Exception as e:
+            logger.warning("extract_for_competition. Can't get " + link + "/discussion" + str(e))
+            continue
 
-        driver.get(link + "/discussion")
-        time.sleep(1)
 
         res_dic["number_topics"] = do.extract_number_topic(driver)
 
@@ -109,6 +117,9 @@ if __name__ == '__main__':
 
     competitions_data, tags_data = extract_for_competition(competition_links, firefox_driver)
     dicts_to_csv(competitions_data, args.compet_file)
+
+    logger.info('competitions_data, tags_data DONE')
+
 
     leader_board = leaderboard.extract_for_leaderboard(competition_links, firefox_driver)
     dicts_to_csv(leader_board, args.leader_file)
