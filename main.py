@@ -113,7 +113,11 @@ if __name__ == '__main__':
                          "organizator_name": tpo.get_organizator_name}
 
     firefox_driver = create_driver()
-    competition_links = open(args.links_file, "r").readlines()
+    try:
+        competition_links = open(args.links_file, "r").readlines()
+    except:
+        logger.error("Cant open file:"+args.links_file)
+        exit(1)
 
     competitions_data, tags_data = extract_for_competition(competition_links, firefox_driver)
     dicts_to_csv(competitions_data, args.compet_file)

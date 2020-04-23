@@ -73,7 +73,7 @@ def extract_for_leaderboard(links, driver):
     for link in links:
         try:
             driver.get(link + "/leaderboard")
-            time.sleep(1)
+            time.sleep(0.5)
         except Exception as e:
             logger.info("Can't get link:  " + link + "/leaderboard")
             continue
