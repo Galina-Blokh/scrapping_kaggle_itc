@@ -70,7 +70,10 @@ def extract_for_leaderboard(links, driver):
     logger.info("Extracting leader board data...")
     leader_board = []
 
-    for link in links:
+    for i, link in enumerate(links):
+        if i % 26 == 25:
+            driver = config.recreate_driver(driver)
+            logger.info('Firefox driver was recreated')
         try:
             driver.get(link + "/leaderboard")
             time.sleep(0.5)

@@ -1,5 +1,4 @@
 import config
-from selenium import webdriver
 import json
 import time
 import csv
@@ -9,18 +8,9 @@ import tags
 import geter_num_topics_prize_organizator as tpo
 import argparse
 import kaggle_api
-from selenium.webdriver.firefox.options import Options
 
-def create_driver():
-    """
-    create selenium firefox  driver
-    :return: driver
-    """
-    options = Options()
-    options.headless = True
-    driver = webdriver.Firefox(options=options, executable_path=r'./geckodriver')
-    logger.info('Firefox driver was created')
-    return driver
+
+
 
 
 def extract_for_competition(links, driver):
@@ -35,9 +25,13 @@ def extract_for_competition(links, driver):
     tags_dic = {}
 
     for link in links:
+        if len(competition_info) % 26 == 25:
+            driver = config.recreate_driver(driver)
+            logger.info('Firefox driver was recreated')
+
         try:
             driver.get(link)
-            time.sleep(1)
+            time.sleep(0.53)
         except Exception as e:
             logger.warning("Can't get `link` " + link + str(e))
             continue
@@ -53,7 +47,7 @@ def extract_for_competition(links, driver):
             logger.debug("no `tags` for `link` " + link + str(e))
         try:
             driver.get(link + "/discussion")
-            time.sleep(1)
+            time.sleep(0.5)
         except Exception as e:
             logger.warning("extract_for_competition. Can't get " + link + "/discussion" + str(e))
             continue
@@ -112,7 +106,8 @@ if __name__ == '__main__':
                          "description": do.get_description_of_competition, "prize": tpo.get_prize_size,
                          "organizator_name": tpo.get_organizator_name}
 
-    firefox_driver = create_driver()
+    firefox_driver = config.create_driver()
+    logger.info('Firefox driver was created')
     try:
         competition_links = open(args.links_file, "r").readlines()
     except:
@@ -124,6 +119,8 @@ if __name__ == '__main__':
 
     logger.info('competitions_data, tags_data DONE')
 
+    firefox_driver = config.recreate_driver(firefox_driver)
+    logger.info('Firefox driver was recreated')
 
     leader_board = leaderboard.extract_for_leaderboard(competition_links, firefox_driver)
     dicts_to_csv(leader_board, args.leader_file)

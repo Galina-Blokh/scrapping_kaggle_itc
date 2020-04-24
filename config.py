@@ -1,5 +1,7 @@
 import logging
 import sys
+from selenium.webdriver.firefox.options import Options
+from selenium import webdriver
 
 LOG_FILE = 'download.log'
 COMPETITORS_TEXT_XPATH = '//*[@id="site-content"]/div[2]/div/div[2]/div[4]/div[1]/div[2]/p[2]'
@@ -11,6 +13,20 @@ LEADERBOARD_DICT_T2 = {'place': 1, 'team_name': 2, 'score': 5, 'entries_leader':
 SCORE_XPATH = '//*[@id="site-content"]/div[2]/div/div[2]/div/div[2]/div/table/thead/tr/th[6]/span/span'
 BASE_URL = 'https://www.kaggle.com/c/'
 
+def create_driver():
+    """
+    create selenium firefox  driver
+    :return: driver
+    """
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options, executable_path=r'./geckodriver')
+    return driver
+
+
+def recreate_driver(driver):
+    driver.close()
+    return create_driver()
 
 def get_logger(name):
     logger = logging.getLogger(name)
