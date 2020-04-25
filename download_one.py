@@ -154,11 +154,12 @@ def extract_number_topic(driver):
     :return: int
     """
     try:
-        number_topics = int(driver.find_element_by_xpath\
-            ('//*[@id="site-content"]/div[2]/div/div[2]/div[1]/div[1]/div/div[1]/span').text)
+        number_topics_str = driver.find_element_by_xpath\
+             ('//*[@id="site-content"]/div[2]/div/div[2]/div[1]/div[1]/div/div[1]/span').text
+        number_topics = int(''.join(ch for ch in number_topics_str if ch.isdigit()))
 
-    except:
-        logger.debug("Can't collect `number_topics` from competition page")
+    except Exception as e:
+        logger.debug("Can't collect `number_topics` from competition page"+str(e))
         return '0'
     logger.debug("Collected `number_topics` from competition page")
 

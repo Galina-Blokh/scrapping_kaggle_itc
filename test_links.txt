@@ -1,5 +1,3 @@
-https://www.kaggle.com/c/techno-sphere-dm-1
-https://www.kaggle.com/c/rutgers-cs674-spring16-detection
 https://www.kaggle.com/c/berkeley-cs280-mini-places-challenge
 https://www.kaggle.com/c/ac761-1-uiuc
 https://www.kaggle.com/c/ae148-0-uiuc

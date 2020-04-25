@@ -1,19 +1,19 @@
 DROP DATABASE IF EXISTS KaggleITC;
 
-CREATE DATABASE KaggleITC;
+CREATE DATABASE KaggleITC CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 USE KaggleITC;
 
 
 CREATE TABLE teams (
   team_id int UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  name  varchar(256)
+  name  varchar(256) CHARACTER SET utf8mb4
 );
 
 CREATE TABLE competitions (
   competition_id int UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  organizator_name varchar(256),
-  description text,
+  organizator_name varchar(256) CHARACTER SET utf8mb4,
+  description text CHARACTER SET utf8mb4,
   link varchar(256),
   teams_count int,
   competitors int,
@@ -50,7 +50,7 @@ CREATE TABLE compet_tags (
 CREATE TABLE kernels (
   kernel_id int UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
   competition_id int,
-  author varchar(250),
+  author varchar(250) CHARACTER SET utf8mb4,
   name varchar(250),
   votes int
 );

@@ -117,10 +117,16 @@ if __name__ == '__main__':
     competitions_data, tags_data = extract_for_competition(competition_links, firefox_driver)
     dicts_to_csv(competitions_data, args.compet_file)
 
+    with open(args.tags_file, 'w') as file:
+        json.dump(tags_data, file)
+
     logger.info('competitions_data, tags_data DONE')
 
-    firefox_driver = config.recreate_driver(firefox_driver)
-    logger.info('Firefox driver was recreated')
+    try:
+        firefox_driver = config.recreate_driver(firefox_driver)
+        logger.info('Firefox driver was recreated')
+    except:
+        logger.warning('Problem recreating driver')
 
     leader_board = leaderboard.extract_for_leaderboard(competition_links, firefox_driver)
     dicts_to_csv(leader_board, args.leader_file)
@@ -129,7 +135,5 @@ if __name__ == '__main__':
     dicts_to_csv(competitions_api, args.competitions_api_file)
     dicts_to_csv(kernels, args.kernels_file)
 
-    with open(args.tags_file, 'w') as file:
-        json.dump(tags_data, file)
 
     logger.info('Scrapping is finished')
